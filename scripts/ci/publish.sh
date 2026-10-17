@@ -9,7 +9,7 @@ if [ -z "${GITHUB_STEP_SUMMARY:-}" ]; then
 fi
 
 echo "## 📦 Publishing to PyPI" >> "$GITHUB_STEP_SUMMARY"
-if make publish > publish_output.txt 2>&1; then
+if make publish TWINE_UPLOAD_ARGS="--verbose --non-interactive --disable-progress-bar" > publish_output.txt 2>&1; then
   # Extract package name and version
   PACKAGE_NAME=$("$PYTHON" -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['name'])")
   PACKAGE_VERSION=$("$PYTHON" -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
@@ -25,6 +25,9 @@ if make publish > publish_output.txt 2>&1; then
   echo "- [View on PyPI](https://pypi.org/project/$PACKAGE_NAME/$PACKAGE_VERSION/)" >> "$GITHUB_STEP_SUMMARY"
   echo "- [Install command](https://pypi.org/project/$PACKAGE_NAME/#description): \`pip install $PACKAGE_NAME==$PACKAGE_VERSION\`" >> "$GITHUB_STEP_SUMMARY"
 else
+  # Verbose Twine output includes the server's rejection reason. Keep it in
+  # the job log as well as the summary, without retrying the upload.
+  cat publish_output.txt
   echo "❌ **Publishing failed!**" >> "$GITHUB_STEP_SUMMARY"
   echo "" >> "$GITHUB_STEP_SUMMARY"
   echo "### Error details:" >> "$GITHUB_STEP_SUMMARY"

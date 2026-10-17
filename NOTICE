@@ -1,0 +1,8 @@
+PrettyData
+
+Copyright 2026 Michal Szczygiel.
+
+Portions of the repository infrastructure are adapted from torch-batteries:
+https://github.com/michalszc/torch-batteries
+Copyright 2025-2026 Michal Szczygiel, Arkadiusz Paterak, and Antoni Zięciak.
+Licensed under the Apache License, Version 2.0.

@@ -3,7 +3,7 @@
 PrettyData is being developed to make visually appealing tables, charts, and
 reports convenient to create in Python, with sensible defaults and minimal setup.
 
-!!! note "v0.1.0 — Repository Foundation"
+!!! note "v0.0.0 — Repository Foundation"
 
     This milestone establishes packaging and development infrastructure only.
     The package is importable, but there are no table, chart, data-import, export,

@@ -1,6 +1,6 @@
 # Contributing to PrettyData
 
-PrettyData 0.1.0 is a repository infrastructure milestone. Feature development
+PrettyData 0.0.0 is a repository infrastructure milestone. Feature development
 will follow; proposals should not assume an existing table, chart, or report API.
 
 ## Development environment
@@ -130,7 +130,7 @@ The automated sequence is **CI → CD → Release**.
    with curated notes and a version-specific PyPI link.
 
 Infrastructure-only follow-up commits may retain the current version. The
-initial bootstrap establishes 0.1.0 once; it implements no feature APIs.
+initial bootstrap establishes 0.0.0 once; it implements no feature APIs.
 
 ### Local release tooling
 

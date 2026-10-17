@@ -1,6 +1,6 @@
 # Release Notes
 
-## 0.1.0 — Unreleased
+## 0.0.0 — Unreleased
 
 - Established the minimal typed package, development tooling, smoke tests,
   version validation, and deployment-identity release tooling in

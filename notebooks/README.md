@@ -1,6 +1,6 @@
 # Notebooks
 
-PrettyData 0.1.0 establishes the repository infrastructure. No example notebooks
+PrettyData 0.0.0 establishes the repository infrastructure. No example notebooks
 are included because the library has no tables, charts, or report APIs yet.
 
 Future examples belong here. Install their environment with the `example` extra.

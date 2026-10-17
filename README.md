@@ -12,7 +12,7 @@ reports with minimal configuration.
 
 ## Development status
 
-**v0.1.0 — Repository Foundation** establishes packaging, development tooling,
+**v0.0.0 — Repository Foundation** establishes packaging, development tooling,
 tests, documentation, and release infrastructure. The package can be imported;
 table, chart, and report functionality has not been implemented.
 

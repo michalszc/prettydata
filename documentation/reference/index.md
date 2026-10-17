@@ -1,6 +1,6 @@
 # API Reference
 
-Version 0.1.0 provides an importable package and version/author metadata only.
+Version 0.0.0 provides an importable package and version/author metadata only.
 No tables, charts, reports, or other feature APIs are implemented.
 
 The package reference below is generated from the installed package by

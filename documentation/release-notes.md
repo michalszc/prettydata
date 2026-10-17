@@ -1,6 +1,6 @@
 # Release Notes
 
-## 0.0.0 — Unreleased
+## 0.0.0 — 2026-10-17
 
 - Established the minimal typed package, development tooling, smoke tests,
   version validation, and deployment-identity release tooling in

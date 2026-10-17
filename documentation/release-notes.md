@@ -7,3 +7,5 @@
   [PR #1](https://github.com/michalszc/prettydata/pull/1).
 - This is the repository foundation milestone. Tables, charts, and reports
   are planned for future development.
+- Prepared static notebook validation without introducing demonstration notebooks
+  for features that have not been implemented.

@@ -1,4 +1,4 @@
-.PHONY: help install install-dev test test-verbose lint lint-fix format format-check type-check build check-build publish-test publish validate-version release-metadata release-select-commit release clean
+.PHONY: help install install-dev test test-verbose lint lint-fix format format-check type-check build check-build publish-test publish validate-version release-metadata release-select-commit release notebooks-check clean
 .DEFAULT_GOAL := help
 
 PYTHON ?= python
@@ -61,6 +61,9 @@ release: ## Publish a GitHub release for the checkout recorded in deployment met
 
 validate-version: ## Check project versions, release notes, and PyPI
 	@PYTHON="$(PYTHON)" bash scripts/validate_version.sh $(VALIDATE_VERSION_ARGS)
+
+notebooks-check: ## Validate saved notebooks without executing cells
+	@PYTHON="$(PYTHON)" bash scripts/validate_notebooks.sh
 
 clean: ## Clean artifacts
 	rm -rf build/

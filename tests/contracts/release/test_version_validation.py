@@ -16,11 +16,11 @@ VALIDATOR = ROOT / "scripts" / "validate_version.sh"
 @pytest.fixture
 def project(tmp_path: Path) -> Path:
     """Create a minimal package and a controlled substitute for curl."""
-    package = tmp_path / "src" / "prettydata"
+    package = tmp_path / "src" / "tabloom"
     package.mkdir(parents=True)
     (package / "__init__.py").write_text('__version__ = "0.1.0"\n')
     (tmp_path / "pyproject.toml").write_text(
-        '[project]\nname = "prettydata"\nversion = "0.1.0"\n',
+        '[project]\nname = "tabloom"\nversion = "0.1.0"\n',
     )
     notes = tmp_path / "documentation"
     notes.mkdir()
@@ -87,7 +87,7 @@ def test_missing_notes(project: Path) -> None:
 
 
 def test_version_mismatch(project: Path) -> None:
-    (project / "src" / "prettydata" / "__init__.py").write_text(
+    (project / "src" / "tabloom" / "__init__.py").write_text(
         '__version__ = "0.2.0"\n',
     )
     result = validate(project, "--offline")

@@ -2,7 +2,7 @@
 
 !!! note "Coming in a future milestone"
 
-    Workflow guides will be added alongside implemented PrettyData features.
+    Workflow guides will be added alongside implemented Tabloom features.
     Version 0.0.0 has no table, chart, import, export, or PDF workflows yet.
 
 Future guides will explain complete user workflows and their trade-offs, including

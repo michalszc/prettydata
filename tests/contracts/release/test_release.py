@@ -22,7 +22,7 @@ SPEC.loader.exec_module(TOOL)
 @pytest.fixture
 def project(tmp_path: Path) -> Path:
     (tmp_path / "pyproject.toml").write_text(
-        '[project]\nname = "prettydata"\nversion = "0.1.0"\n',
+        '[project]\nname = "tabloom"\nversion = "0.1.0"\n',
     )
     documentation = tmp_path / "documentation"
     documentation.mkdir()
@@ -34,7 +34,7 @@ def project(tmp_path: Path) -> Path:
         json.dumps(
             {
                 "sha": SHA,
-                "name": "prettydata",
+                "name": "tabloom",
                 "version": "0.1.0",
             }
         )
@@ -104,7 +104,7 @@ def test_creates_release_at_deployed_commit(
     assert "--verify-tag" not in create
     assert github["notes"].startswith("## What's Changed\n\n- Current change.")
     assert "Old change." not in github["notes"]
-    assert "https://pypi.org/project/prettydata/0.1.0/" in github["notes"]
+    assert "https://pypi.org/project/tabloom/0.1.0/" in github["notes"]
     assert "Published: [v0.1.0]" in (project / "summary.md").read_text()
 
 
@@ -276,7 +276,7 @@ def test_record_metadata_without_ci_environment(
     TOOL.record_metadata(output)
     assert TOOL.read_metadata(output) == {
         "sha": SHA,
-        "name": "prettydata",
+        "name": "tabloom",
         "version": "0.1.0",
     }
 

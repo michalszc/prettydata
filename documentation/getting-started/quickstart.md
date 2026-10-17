@@ -3,9 +3,9 @@
 Verify the installed package:
 
 ```python
-import prettydata
+import tabloom
 
-print(prettydata.__version__)  # 0.0.0
+print(tabloom.__version__)  # 0.0.0
 ```
 
 The package also exposes `__author__` metadata. There are no public feature

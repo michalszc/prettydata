@@ -19,7 +19,7 @@ VERSION = "0.1.0"
 @pytest.fixture
 def validation_project(tmp_path: Path) -> Path:
     """Create the minimum importable project used by validator subprocesses."""
-    package = tmp_path / "src" / "prettydata"
+    package = tmp_path / "src" / "tabloom"
     package.mkdir(parents=True)
     (tmp_path / "pyproject.toml").write_text(
         f'[project]\nname = "fixture"\nversion = "{VERSION}"\n',
@@ -38,13 +38,13 @@ def notebook(*, version_cells: int = 1) -> nbformat.NotebookNode:
     for execution_count in range(1, version_cells + 1):
         cells.append(
             new_code_cell(
-                "import prettydata\nprint(prettydata.__version__)",
+                "import tabloom\nprint(tabloom.__version__)",
                 execution_count=execution_count,
                 outputs=[
                     new_output(
                         "stream",
                         name="stdout",
-                        text=f"prettydata version: {VERSION}\n",
+                        text=f"tabloom version: {VERSION}\n",
                     )
                 ],
             )
@@ -77,7 +77,7 @@ def test_accepts_valid_executed_notebook(
     result = validate(validation_project, path)
 
     assert result.returncode == 0
-    assert f"executed with prettydata {VERSION}" in result.stdout
+    assert f"executed with tabloom {VERSION}" in result.stdout
 
 
 def test_accepts_unexecuted_installation_cell(
@@ -87,7 +87,7 @@ def test_accepts_unexecuted_installation_cell(
     value.cells.insert(
         0,
         new_code_cell(
-            '%pip install "prettydata[example]"',
+            '%pip install "tabloom[example]"',
             execution_count=None,
             outputs=[],
         ),
@@ -107,7 +107,7 @@ def test_rejects_saved_installation_output(
     value.cells.insert(
         0,
         new_code_cell(
-            '%pip install "prettydata[example]"',
+            '%pip install "tabloom[example]"',
             execution_count=1,
             outputs=[
                 new_output("stream", name="stdout", text="Successfully installed")
@@ -198,7 +198,7 @@ def test_rejects_missing_version_cell(validation_project: Path, tmp_path: Path) 
     result = validate(validation_project, path)
 
     assert result.returncode != 0
-    assert "missing prettydata.__version__ cell" in result.stdout
+    assert "missing tabloom.__version__ cell" in result.stdout
 
 
 def test_rejects_multiple_version_cells(
@@ -210,12 +210,12 @@ def test_rejects_multiple_version_cells(
     result = validate(validation_project, path)
 
     assert result.returncode != 0
-    assert "multiple prettydata.__version__ cells" in result.stdout
+    assert "multiple tabloom.__version__ cells" in result.stdout
 
 
 def test_rejects_stale_version_output(validation_project: Path, tmp_path: Path) -> None:
     value = notebook()
-    value.cells[0].outputs[0].text = "prettydata version: 0.7.0\n"
+    value.cells[0].outputs[0].text = "tabloom version: 0.7.0\n"
     path = tmp_path / "stale-version.ipynb"
     write_notebook(path, value)
 
@@ -228,7 +228,7 @@ def test_rejects_stale_version_output(validation_project: Path, tmp_path: Path) 
 def test_rejects_mismatched_project_versions(
     validation_project: Path, tmp_path: Path
 ) -> None:
-    init_file = validation_project / "src" / "prettydata" / "__init__.py"
+    init_file = validation_project / "src" / "tabloom" / "__init__.py"
     init_file.write_text('__version__ = "0.7.0"\n', encoding="utf-8")
     path = tmp_path / "valid.ipynb"
     write_notebook(path, notebook())

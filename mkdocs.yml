@@ -1,10 +1,10 @@
-site_name: PrettyData
+site_name: Tabloom
 site_description: >-
   A Python library being developed for visually appealing tables, charts,
   and reports with minimal configuration.
-site_url: https://michalszc.github.io/prettydata/
-repo_url: https://github.com/michalszc/prettydata
-repo_name: michalszc/prettydata
+site_url: https://michalszc.github.io/tabloom/
+repo_url: https://github.com/michalszc/tabloom
+repo_name: michalszc/tabloom
 docs_dir: documentation
 site_dir: docs
 strict: true

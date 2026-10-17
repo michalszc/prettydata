@@ -34,10 +34,10 @@ else
 fi
 
 PYPROJECT="$PROJECT_ROOT/pyproject.toml"
-INIT_FILE="$PROJECT_ROOT/src/prettydata/__init__.py"
+INIT_FILE="$PROJECT_ROOT/src/tabloom/__init__.py"
 
 if [ ! -f "$PYPROJECT" ] || [ ! -f "$INIT_FILE" ]; then
-    printf '%s\n' "project root must contain pyproject.toml and src/prettydata/__init__.py" >&2
+    printf '%s\n' "project root must contain pyproject.toml and src/tabloom/__init__.py" >&2
     exit 2
 fi
 
@@ -55,7 +55,7 @@ if [ -z "$init_version" ] || [ "$pyproject_version" != "$init_version" ]; then
 fi
 
 runtime_version=$(
-    PYTHONPATH="$PROJECT_ROOT/src" "$PYTHON" -c 'import prettydata; print(prettydata.__version__)'
+    PYTHONPATH="$PROJECT_ROOT/src" "$PYTHON" -c 'import tabloom; print(tabloom.__version__)'
 ) || exit 2
 if [ "$runtime_version" != "$pyproject_version" ]; then
     printf 'project version mismatch: declared=%s, imported=%s\n' \
@@ -110,7 +110,7 @@ for notebook in "${notebooks[@]}"; do
             select(.value.cell_type == "code") |
             select(
                 (.value.source | if type == "array" then join("") else . end) |
-                test("^\\s*%pip\\s+install\\s+.*prettydata")
+                test("^\\s*%pip\\s+install\\s+.*tabloom")
             ) |
             select(
                 .value.execution_count != null or
@@ -130,7 +130,7 @@ for notebook in "${notebooks[@]}"; do
             select(.value.execution_count == null) |
             select(
                 (.value.source | if type == "array" then join("") else . end) |
-                test("^\\s*%pip\\s+install\\s+.*prettydata") | not
+                test("^\\s*%pip\\s+install\\s+.*tabloom") | not
             ) |
             .key
         ' "$notebook" | head -n 1)
@@ -156,12 +156,12 @@ for notebook in "${notebooks[@]}"; do
             .cells[] |
             select(.cell_type == "code") |
             (.source | if type == "array" then join("") else . end) |
-            select(contains("prettydata.__version__"))
+            select(contains("tabloom.__version__"))
         ] | length' "$notebook")
         if [ "$version_cell_count" -eq 0 ]; then
-            reason="missing prettydata.__version__ cell"
+            reason="missing tabloom.__version__ cell"
         elif [ "$version_cell_count" -ne 1 ]; then
-            reason="multiple prettydata.__version__ cells"
+            reason="multiple tabloom.__version__ cells"
         fi
     fi
 
@@ -169,7 +169,7 @@ for notebook in "${notebooks[@]}"; do
         version_output=$(jq -r '
             .cells[] |
             select(.cell_type == "code") |
-            select((.source | if type == "array" then join("") else . end) | contains("prettydata.__version__")) |
+            select((.source | if type == "array" then join("") else . end) | contains("tabloom.__version__")) |
             .outputs[]? |
             if .output_type == "stream" then .text
             elif .output_type == "display_data" or .output_type == "execute_result" then .data["text/plain"] // empty
@@ -186,7 +186,7 @@ for notebook in "${notebooks[@]}"; do
         printf '✗ %s: %s\n' "$name" "$reason"
         failed=1
     else
-        printf '✓ %s: executed with prettydata %s\n' "$name" "$pyproject_version"
+        printf '✓ %s: executed with tabloom %s\n' "$name" "$pyproject_version"
     fi
 done
 

@@ -89,7 +89,7 @@ def test_cd_records_identity_before_publishing(tmp_path: Path) -> None:
     assert steps[names.index("Build package")]["run"] == "make build"
     assert steps[names.index("Check build")]["run"] == "make check-build"
     (tmp_path / "pyproject.toml").write_text(
-        '[project]\nname = "prettydata"\nversion = "0.1.0"\n',
+        '[project]\nname = "tabloom"\nversion = "0.1.0"\n',
     )
     binary = tmp_path / "bin"
     binary.mkdir()
@@ -118,7 +118,7 @@ def test_cd_records_identity_before_publishing(tmp_path: Path) -> None:
     assert result.returncode == 0, result.stderr
     assert json.loads((tmp_path / "release-metadata.json").read_text()) == {
         "sha": SHA,
-        "name": "prettydata",
+        "name": "tabloom",
         "version": "0.1.0",
     }
     environment["DEPLOYED_SHA"] = "b" * 40
@@ -238,7 +238,7 @@ def test_ci_checks_release_automation_changes() -> None:
     makefile = (ROOT / "Makefile").read_text()
     assert "ruff check src/ tests/ scripts/" in makefile
     assert "ruff format --diff src/ tests/ scripts/" in makefile
-    assert "mypy src/prettydata/ tests/ scripts/" in makefile
+    assert "mypy src/tabloom/ tests/ scripts/" in makefile
     assert "pytest $(TEST_PATH) $(PYTEST_ARGS)" in makefile
 
 
@@ -367,7 +367,7 @@ def test_make_ci_publish_reports_mocked_upload(tmp_path: Path, exit_code: int) -
     assert real_make is not None
     (tmp_path / "Makefile").write_text((ROOT / "Makefile").read_text())
     (tmp_path / "pyproject.toml").write_text(
-        '[project]\nname = "prettydata"\nversion = "0.1.0"\n',
+        '[project]\nname = "tabloom"\nversion = "0.1.0"\n',
     )
     scripts = tmp_path / "scripts" / "ci"
     scripts.mkdir(parents=True)
@@ -404,7 +404,7 @@ def test_make_ci_publish_reports_mocked_upload(tmp_path: Path, exit_code: int) -
     content = summary.read_text()
     if exit_code == 0:
         assert "Package published successfully" in content
-        assert "https://pypi.org/project/prettydata/0.1.0/" in content
+        assert "https://pypi.org/project/tabloom/0.1.0/" in content
     else:
         assert "Publishing failed" in content
         assert "400 Bad Request: fixture rejection reason" in content

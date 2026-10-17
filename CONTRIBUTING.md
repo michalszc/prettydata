@@ -1,6 +1,6 @@
-# Contributing to PrettyData
+# Contributing to Tabloom
 
-PrettyData 0.0.0 is a repository infrastructure milestone. Feature development
+Tabloom 0.0.0 is a repository infrastructure milestone. Feature development
 will follow; proposals should not assume an existing table, chart, or report API.
 
 ## Development environment
@@ -8,7 +8,7 @@ will follow; proposals should not assume an existing table, chart, or report API
 Prerequisites: Python 3.12+, pip 25.1+ (dependency group support), Git, and `jq`
 for notebook validation. Release publication additionally uses GitHub CLI.
 
-Clone `https://github.com/michalszc/prettydata.git` and enter the checkout. Use
+Clone `https://github.com/michalszc/tabloom.git` and enter the checkout. Use
 the existing `.venv`; new contributors can create one with
 `python3.12 -m venv .venv` if needed.
 
@@ -76,7 +76,7 @@ The underlying check's output is saved in its `*_output.txt` file.
 
 ## Repository organization
 
-- `src/prettydata/`: importable package and PEP 561 typed marker.
+- `src/tabloom/`: importable package and PEP 561 typed marker.
 - `tests/contracts/`: package and repository infrastructure tests.
 - `documentation/`: MkDocs sources, API templates, and release notes.
 - `docs/`: generated site, ignored by Git.
@@ -88,7 +88,7 @@ The underlying check's output is saved in its `*_output.txt` file.
 ## Documentation and notebooks
 
 `make docs` builds with strict MkDocs checks. `make docs-serve` starts a local
-preview at `http://127.0.0.1:8000`; stop it with Ctrl+C. Document current behavior
+preview at `http://127.0.0.0:8000`; stop it with Ctrl+C. Document current behavior
 and expose real APIs through mkdocstrings as they are added.
 
 `make notebooks-check` validates saved outputs without executing cells. The basic
@@ -117,7 +117,7 @@ operation, not a validation command.
 
 The automated sequence is **CI → CD → Release**.
 
-1. Update the version in both `pyproject.toml` and `src/prettydata/__init__.py`
+1. Update the version in both `pyproject.toml` and `src/tabloom/__init__.py`
    for source changes. Keep the values equal.
 2. Add exactly one nonempty `## <version> — <date or Unreleased>` section in
    `documentation/release-notes.md`, linking the corresponding PR.
@@ -137,7 +137,7 @@ initial bootstrap establishes 0.0.0 once; it implements no feature APIs.
 
 ```bash
 make release-metadata
-make release-metadata RELEASE_METADATA=/tmp/prettydata-release-metadata.json
+make release-metadata RELEASE_METADATA=/tmp/tabloom-release-metadata.json
 ```
 
 Metadata records `sha`, `name`, and `version`. CD also supplies `DEPLOYED_SHA`
@@ -171,7 +171,7 @@ The following settings are configured manually outside the repository:
 - **GitHub Pages:** choose **GitHub Actions** in Settings → Pages. Configure the
   `github-pages` environment to allow deployments from `master`. `docs.yml`
   builds PR documentation and deploys only pushes to `master`.
-- **PyPI:** configure a project-scoped API token for `prettydata` as the repository
+- **PyPI:** configure a project-scoped API token for `tabloom` as the repository
   Actions secret `PYPI_API_TOKEN`. CD passes it to Twine as `TWINE_PASSWORD`, with
   `TWINE_USERNAME=__token__`, and runs `make publish`.
 - **GitHub Releases:** permit the Release job's `actions: read` and

@@ -1,10 +1,7 @@
 # Examples
 
-!!! note "Coming in a future milestone"
+Explore the notebooks below for examples of using PrettyData.
 
-    No feature examples are available in PrettyData 0.0.0. Maintained notebooks
-    and their Colab versions will be linked here as features are implemented.
-
-The [notebooks directory](https://github.com/michalszc/prettydata/tree/master/notebooks)
-is ready for future examples. It currently contains validation guidance only.
-Use the [quick start](getting-started/quickstart.md) to verify installation.
+| Notebook | What it demonstrates | Links |
+| --- | --- | --- |
+| **Basic usage** | Package import and version inspection | [![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/michalszc/prettydata/blob/master/notebooks/basic_usage.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/michalszc/prettydata/blob/master/notebooks/basic_usage.ipynb) |

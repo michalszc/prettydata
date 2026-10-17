@@ -62,6 +62,7 @@ print(prettydata.__version__)
 
 | Example | Description | Notebook | Colab |
 |---------|-------------|----------|-------|
+| **Basic usage** | Import PrettyData and print its version | [basic_usage.ipynb](notebooks/basic_usage.ipynb) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/michalszc/prettydata/blob/master/notebooks/basic_usage.ipynb) |
 
 ## Development
 

@@ -80,7 +80,7 @@ The underlying check's output is saved in its `*_output.txt` file.
 - `tests/contracts/`: package and repository infrastructure tests.
 - `documentation/`: MkDocs sources, API templates, and release notes.
 - `docs/`: generated site, ignored by Git.
-- `notebooks/`: future examples and saved-output validation guidance.
+- `notebooks/`: example notebooks.
 - `assets/`: future project assets.
 - `scripts/`: version, notebook, release, and CI-summary tooling.
 - `.github/workflows/`: CI, CD, documentation, notebooks, releases, and maintenance.
@@ -91,9 +91,10 @@ The underlying check's output is saved in its `*_output.txt` file.
 preview at `http://127.0.0.1:8000`; stop it with Ctrl+C. Document current behavior
 and expose real APIs through mkdocstrings as they are added.
 
-`make notebooks-check` validates saved outputs without executing cells. There are
-no demonstration notebooks yet. Future examples must record the current version,
-execution counts, and error-free outputs. Installation cells remain unexecuted.
+`make notebooks-check` validates saved outputs without executing cells. The basic
+usage notebook verifies package import and version output. Examples must record
+the current version, execution counts, and error-free outputs. Installation cells
+remain unexecuted.
 An empty directory passes; invalid requested paths fail.
 
 If a documentation build fails in `Highlight.__init__`, reinstall the constrained

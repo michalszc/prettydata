@@ -15,3 +15,5 @@
   notebook and documentation workflows, GitHub Pages, Twine publishing,
   GitHub releases, and stale issue/PR maintenance.
 - Exposed the shared CI check summaries through `make ci-check CHECK=...`.
+- Added a basic usage notebook that imports PrettyData and prints its version,
+  linked from the README and documentation examples.

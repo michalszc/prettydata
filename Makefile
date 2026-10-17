@@ -1,4 +1,4 @@
-.PHONY: help install install-dev test test-verbose lint lint-fix format format-check type-check build check-build publish-test publish validate-version release-metadata release-select-commit release notebooks-check clean
+.PHONY: help install install-dev test test-verbose lint lint-fix format format-check type-check build check-build publish-test publish validate-version release-metadata release-select-commit release notebooks-check docs docs-serve clean
 .DEFAULT_GOAL := help
 
 PYTHON ?= python
@@ -64,6 +64,15 @@ validate-version: ## Check project versions, release notes, and PyPI
 
 notebooks-check: ## Validate saved notebooks without executing cells
 	@PYTHON="$(PYTHON)" bash scripts/validate_notebooks.sh
+
+docs: ## Validate and generate documentation using strict MkDocs checks
+	NO_MKDOCS_2_WARNING=1 $(PYTHON) -m mkdocs build --strict
+	@echo "📚 Documentation generated in docs/ directory"
+
+docs-serve: ## Serve documentation locally using MkDocs
+	@echo "🌐 Starting local server at http://localhost:8000"
+	@echo "Press Ctrl+C to stop the server"
+	NO_MKDOCS_2_WARNING=1 $(PYTHON) -m mkdocs serve --dev-addr 127.0.0.1:8000
 
 clean: ## Clean artifacts
 	rm -rf build/

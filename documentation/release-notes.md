@@ -9,3 +9,5 @@
   are planned for future development.
 - Prepared static notebook validation without introducing demonstration notebooks
   for features that have not been implemented.
+- Added strict MkDocs Material documentation, mkdocstrings API infrastructure,
+  development instructions, and contributor/release guidance.

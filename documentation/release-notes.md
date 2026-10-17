@@ -1,5 +1,10 @@
 # Release Notes
 
+## 0.1.0 — Unreleased
+
+- Added shared visual themes and scoped matplotlib rendering foundations in
+  [PR #5](https://github.com/michalszc/tabloom/pull/5).
+
 ## 0.0.0 — 2026-10-17
 
 - Established the minimal typed package, development tooling, smoke tests,

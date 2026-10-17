@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches:
+        - master
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "Makefile"
+      - "scripts/ci/**"
+      - ".github/workflows/ci.yml"
+      - ".github/workflows/cd.yml"
+      - ".github/workflows/release.yml"
+      - "scripts/release.py"
+      - "documentation/release-notes.md"
+  pull_request:
+    branches:
+        - master
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "Makefile"
+      - "scripts/ci/**"
+      - ".github/workflows/ci.yml"
+      - ".github/workflows/cd.yml"
+      - ".github/workflows/release.yml"
+      - "scripts/release.py"
+      - "documentation/release-notes.md"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-checks:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [lint, format-check, type-check, test, validate-version]
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+        cache-dependency-path: 'pyproject.toml'
+
+    - name: Install dependencies
+      run: make install-dev INSTALL_HOOKS=0
+
+    - name: Run ${{ matrix.check }}
+      if: matrix.check != 'validate-version' || github.event_name == 'pull_request'
+      run: make ci-check CHECK="${{ matrix.check }}"
+
+  python-compatibility:
+    name: Python ${{ matrix.python-version }} compatibility
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install dependencies
+        run: make install-dev INSTALL_HOOKS=0
+      - name: Check Python compatibility
+        run: make ci-check CHECK=test

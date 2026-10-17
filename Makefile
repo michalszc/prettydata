@@ -1,21 +1,29 @@
-.PHONY: help install install-dev test test-verbose lint lint-fix format format-check type-check build check-build publish-test publish validate-version release-metadata release-select-commit release notebooks-check docs docs-serve clean
+.PHONY: help install install-dev ci-check ci-publish test test-verbose lint lint-fix format format-check type-check build check-build publish-test publish validate-version release-metadata release-select-commit release notebooks-check docs docs-serve clean
 .DEFAULT_GOAL := help
 
 PYTHON ?= python
+INSTALL_ARGS ?=
+INSTALL_HOOKS ?= 1
 TEST_PATH ?= tests/
 PYTEST_ARGS ?=
 VALIDATE_VERSION_ARGS ?=
+CHECK ?= test
 
 help: ## Show this help message
 	@echo "Available commands:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 install: ## Install package
-	$(PYTHON) -m pip install -e .
+	$(PYTHON) -m pip install -e . $(INSTALL_ARGS)
 
 install-dev: ## Install package with development dependencies
 	$(PYTHON) -m pip install -e '.[all]' --group dev
+ifeq ($(INSTALL_HOOKS),1)
 	$(PYTHON) -m pre_commit install
+endif
+
+ci-check: ## Run a check with a CI summary (CHECK=test, lint, format-check, type-check, validate-version, notebooks-check)
+	@bash scripts/ci/run_check.sh "$(CHECK)"
 
 test: ## Run tests
 	$(PYTHON) -m pytest $(TEST_PATH) $(PYTEST_ARGS) --cov=src/prettydata --cov-report=term-missing --cov-report=html
@@ -46,6 +54,9 @@ publish-test: ## Publish to TestPyPI
 
 publish: ## Publish to PyPI
 	$(PYTHON) -m twine upload dist/*
+
+ci-publish: ## Publish to PyPI with a CI summary
+	@PYTHON="$(PYTHON)" bash scripts/ci/publish.sh
 
 check-build: ## Check if build is ready for publishing
 	$(PYTHON) -m twine check dist/*

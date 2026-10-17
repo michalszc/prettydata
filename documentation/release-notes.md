@@ -11,3 +11,7 @@
   for features that have not been implemented.
 - Added strict MkDocs Material documentation, mkdocstrings API infrastructure,
   development instructions, and contributor/release guidance.
+- Added CI quality and Python 3.12–3.14 compatibility checks, separate static
+  notebook and documentation workflows, GitHub Pages, Twine publishing,
+  GitHub releases, and stale issue/PR maintenance.
+- Exposed the shared CI check summaries through `make ci-check CHECK=...`.

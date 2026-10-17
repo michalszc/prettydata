@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# Actions supplies this file; locally print a temporary summary on exit.
+if [ -z "${GITHUB_STEP_SUMMARY:-}" ]; then
+    GITHUB_STEP_SUMMARY=$(mktemp)
+    trap 'cat "$GITHUB_STEP_SUMMARY"; rm -f "$GITHUB_STEP_SUMMARY"' EXIT
+fi
+
 run_check_with_summary() {
     local check_name="$1"
     local icon="$2"

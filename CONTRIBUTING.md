@@ -19,6 +19,7 @@ make install-dev
 
 This installs the editable package, `all` extras, and `dev` dependency group,
 then installs pre-commit hooks. The first commit may download hook environments.
+Use `make install-dev INSTALL_HOOKS=0` to skip hook installation, as the CI jobs do.
 The `example` extra supplies notebook kernel and widget support. No alternative
 package manager or lockfile is required.
 
@@ -60,6 +61,19 @@ pre-commit run --all-files
 Pre-commit checks whitespace, final newlines, YAML, large files, merge conflicts,
 debug statements, and Ruff linting/formatting. CLI and hook Ruff versions match.
 
+The workflows run the shared summary script through Make:
+
+```bash
+make ci-check CHECK=lint
+make ci-check CHECK=test
+make ci-check CHECK=notebooks-check
+make ci-check CHECK=validate-version VALIDATE_VERSION_ARGS=--offline
+```
+
+`CHECK` defaults to `test` and also accepts `format-check` and `type-check`.
+Summaries go to `GITHUB_STEP_SUMMARY` in Actions and to the terminal locally.
+The underlying check's output is saved in its `*_output.txt` file.
+
 ## Repository organization
 
 - `src/prettydata/`: importable package and PEP 561 typed marker.
@@ -94,6 +108,9 @@ package, coverage, cache, and documentation artifacts while preserving `.venv`.
 
 Manual uploads use `make publish-test` and `make publish`. These are publishing
 operations requiring intentional authentication. Ordinary checks never invoke them.
+CD uses `make ci-publish`, which runs `scripts/ci/publish.sh` around `make publish`
+to preserve the publishing success/failure summary. It is also a publishing
+operation, not a validation command.
 
 ## Release process
 
@@ -107,7 +124,7 @@ The automated sequence is **CI → CD → Release**.
    distribution builds before release.
 4. Merge the reviewed PR to `master`. Successful push CI triggers CD for that
    exact commit. CD builds/checks distributions, records deployment identity,
-   and publishes through the protected `pypi` environment and Trusted Publishing.
+   and publishes through `make ci-publish` using the `PYPI_API_TOKEN` secret.
 5. Successful CD triggers Release, which downloads metadata from the exact CD run,
    checks out the deployed SHA, validates name/version, and creates `v<version>`
    with curated notes and a version-specific PyPI link.
@@ -134,9 +151,9 @@ selects the file, `RELEASE_PROJECT` selects the deployed checkout, and
 
 ### Configuration and recovery
 
-Maintainers must configure GitHub Pages, the `pypi` environment and PyPI Trusted
-Publisher, and repository token permissions. Workflow chaining becomes active
-once these files exist on the default branch. No external credentials are committed.
+Maintainers must configure GitHub Pages, the `PYPI_API_TOKEN` repository secret,
+and repository token permissions. Workflow chaining becomes active once these
+files exist on the default branch. No external credentials are committed.
 
 For GitHub release failures after PyPI publication, rerun the failed Release job
 while its CD metadata artifact is available. Avoid rerunning CD solely to recover
@@ -145,6 +162,36 @@ existing published release at the same commit. Conflicting tags, draft releases,
 mismatched metadata, and unavailable artifacts fail for maintainer review.
 Automation never moves tags or overwrites releases. GitHub supplies tag source
 archives; package wheels and sdists remain on PyPI.
+
+## Repository configuration for maintainers
+
+The following settings are configured manually outside the repository:
+
+- **GitHub Pages:** choose **GitHub Actions** in Settings → Pages. Configure the
+  `github-pages` environment to allow deployments from `master`. `docs.yml`
+  builds PR documentation and deploys only pushes to `master`.
+- **PyPI:** configure a project-scoped API token for `prettydata` as the repository
+  Actions secret `PYPI_API_TOKEN`. CD passes it to Twine as `TWINE_PASSWORD`, with
+  `TWINE_USERNAME=__token__`, and runs `make publish`.
+- **GitHub Releases:** permit the Release job's `actions: read` and
+  `contents: write` permissions under repository/organization policies. It uses
+  the automatic `GITHUB_TOKEN`; no separate PAT is required for GitHub releases.
+- **Maintenance:** the scheduled workflow uses the `no-activity` label for stale
+  issues and PRs. Create that label if it is not present. The policy marks items
+  after 90 inactive days and closes them after another 30 days.
+
+The first workflow chain must be checked after the workflow files reach the default
+branch. CI runs quality checks and tests on Python 3.12; a separate
+`python-compatibility` job tests Python 3.13 and 3.14. Documentation and notebooks
+have their own workflows. Regular PRs cannot publish packages or deploy Pages.
+CD builds and checks distributions from the exact successful CI commit, records
+and uploads metadata, and publishes through Twine. Release retrieves metadata
+from that specific CD run.
+
+Workflow dependency installation uses `make install-dev INSTALL_HOOKS=0`, or `make install` with
+`INSTALL_ARGS='--group docs'` / `INSTALL_ARGS='--group build'`. These use the
+same pip groups as local development. `make publish-test` remains available for
+manual TestPyPI uploads.
 
 ## Code style and contributions
 

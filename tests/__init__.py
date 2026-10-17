@@ -1,1 +1,1 @@
-"""PrettyData tests."""
+"""Tabloom tests."""

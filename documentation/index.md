@@ -1,6 +1,6 @@
-# PrettyData
+# Tabloom
 
-PrettyData is being developed to make visually appealing tables, charts, and
+Tabloom is being developed to make visually appealing tables, charts, and
 reports convenient to create in Python, with sensible defaults and minimal setup.
 
 !!! note "v0.0.0 — Repository Foundation"

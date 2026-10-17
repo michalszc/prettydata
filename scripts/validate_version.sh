@@ -16,7 +16,7 @@ fi
 
 echo "🔍 Validating version consistency..."
 PYPROJECT_VERSION=$("$PYTHON" -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
-INIT_VERSION=$("$PYTHON" -c "import sys; sys.path.insert(0, 'src'); import prettydata; print(prettydata.__version__)")
+INIT_VERSION=$("$PYTHON" -c "import sys; sys.path.insert(0, 'src'); import tabloom; print(tabloom.__version__)")
 echo "📄 pyproject.toml: $PYPROJECT_VERSION"
 echo "📄 __init__.py:    $INIT_VERSION"
 if [ "$PYPROJECT_VERSION" != "$INIT_VERSION" ]; then

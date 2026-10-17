@@ -27,10 +27,10 @@ ci-check: ## Run a check with a CI summary (CHECK=test, lint, format-check, type
 	@bash scripts/ci/run_check.sh "$(CHECK)"
 
 test: ## Run tests
-	$(PYTHON) -m pytest $(TEST_PATH) $(PYTEST_ARGS) --cov=src/prettydata --cov-report=term-missing --cov-report=html
+	$(PYTHON) -m pytest $(TEST_PATH) $(PYTEST_ARGS) --cov=src/tabloom --cov-report=term-missing --cov-report=html
 
 test-verbose: ## Run tests with verbose output
-	$(PYTHON) -m pytest $(TEST_PATH) $(PYTEST_ARGS) -v --cov=src/prettydata --cov-report=term-missing
+	$(PYTHON) -m pytest $(TEST_PATH) $(PYTEST_ARGS) -v --cov=src/tabloom --cov-report=term-missing
 
 lint: ## Run linting (ruff check)
 	$(PYTHON) -m ruff check src/ tests/ scripts/
@@ -45,7 +45,7 @@ format-check: ## Check code formatting without making changes
 	$(PYTHON) -m ruff format --diff src/ tests/ scripts/
 
 type-check: ## Run type checking (mypy)
-	$(PYTHON) -m mypy src/prettydata/ tests/ scripts/
+	$(PYTHON) -m mypy src/tabloom/ tests/ scripts/
 
 build: ## Build package for distribution
 	$(PYTHON) -m build

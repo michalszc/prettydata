@@ -3,7 +3,7 @@ requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "prettydata"
+name = "tabloom"
 version = "0.0.0"
 description = "A Python library for visually appealing tables, charts, and reports with minimal configuration."
 readme = "README.md"
@@ -36,7 +36,7 @@ example = [
     "ipykernel>=7.1.0",
     "ipywidgets>=8.1.7",
 ]
-all = ["prettydata[example]"]
+all = ["tabloom[example]"]
 
 [dependency-groups]
 test = [
@@ -72,17 +72,17 @@ dev = [
 ]
 
 [project.urls]
-Documentation = "https://michalszc.github.io/prettydata/"
-Homepage = "https://github.com/michalszc/prettydata"
-Repository = "https://github.com/michalszc/prettydata"
-Issues = "https://github.com/michalszc/prettydata/issues"
+Documentation = "https://michalszc.github.io/tabloom/"
+Homepage = "https://github.com/michalszc/tabloom"
+Repository = "https://github.com/michalszc/tabloom"
+Issues = "https://github.com/michalszc/tabloom/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["prettydata", "prettydata.*"]
+include = ["tabloom", "tabloom.*"]
 
 [tool.setuptools.package-data]
-prettydata = ["py.typed"]
+tabloom = ["py.typed"]
 
 [tool.setuptools.package-dir]
 "" = "src"
@@ -147,7 +147,7 @@ python_classes = ["Test*"]
 python_functions = ["test_*"]
 
 [tool.coverage.run]
-source = ["src/prettydata"]
+source = ["src/tabloom"]
 omit = [
     "*/tests/*",
     "*/__pycache__/*",

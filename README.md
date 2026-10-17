@@ -9,34 +9,40 @@
   <a href="https://michalszc.github.io/prettydata/"><img src="https://img.shields.io/badge/docs-online-blue.svg" alt="Docs"></a>
 </p>
 
-A Python library being developed for visually appealing tables, charts, and
-reports with minimal configuration.
+A Python library for visually appealing tables, charts, and reports with minimal
+configuration.
 
-## Development status
+Designed around pandas and matplotlib, PrettyData aims to combine sensible visual
+defaults with access to the underlying libraries for advanced customization.
 
-**v0.0.0 — Repository Foundation** establishes packaging, development tooling,
-tests, documentation, and release infrastructure. The package can be imported;
-table, chart, and report functionality has not been implemented.
+## Features
 
-## Planned scope
+PrettyData provides:
 
-- Convenient tabular data creation, rows, and records.
-- CSV, Excel, JSON, and other dataset imports with pandas integration.
-- Attractive tables and matplotlib charts with sensible defaults.
-- Advanced customization through underlying pandas and matplotlib objects.
-- Exporting tables and charts and combining them into PDF reports.
-
-These are future capabilities. No feature API is available in this milestone.
+- Convenient tabular data creation, rows, and records
+- Dataset imports from CSV, Excel, JSON, and other formats
+- Integration with pandas for data manipulation
+- Attractive tables and matplotlib charts with sensible defaults
+- Advanced customization through pandas and matplotlib
+- Table and chart exports and PDF reports combining generated visuals
 
 ## Installation
-
-Python 3.12+ is required. Install from PyPI:
 
 ```bash
 pip install prettydata
 ```
 
-The initial dependencies are pandas and matplotlib. Verify installation with:
+Python 3.12+ is required. pandas and matplotlib are installed automatically.
+
+For the notebook dependencies:
+
+```bash
+pip install "prettydata[example]"
+```
+
+## Quick start
+
+Import PrettyData and check its version:
 
 ```python
 import prettydata
@@ -44,28 +50,21 @@ import prettydata
 print(prettydata.__version__)
 ```
 
-The PyPI distribution and Python import names are both `prettydata`.
+## Documentation
+
+- [Installation](https://michalszc.github.io/prettydata/getting-started/installation/)
+- [Quick start](https://michalszc.github.io/prettydata/getting-started/quickstart/)
+- [Core concepts](https://michalszc.github.io/prettydata/getting-started/core-concepts/)
+- [Guides](https://michalszc.github.io/prettydata/guides/)
+- [API reference](https://michalszc.github.io/prettydata/reference/)
+
+## Examples
+
+| Example | Description | Notebook | Colab |
+|---------|-------------|----------|-------|
 
 ## Development
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for environment setup, quality checks, and
 the release workflow. Issues and feature requests are welcome in the
 [GitHub repository](https://github.com/michalszc/prettydata/issues).
-
-## Documentation
-
-- [Documentation site](https://michalszc.github.io/prettydata/) — available after GitHub Pages deployment.
-- [Installation](documentation/getting-started/installation.md).
-- [Quick start](documentation/getting-started/quickstart.md).
-- [Guides](documentation/guides/index.md).
-- [API reference](documentation/reference/index.md).
-- [Examples](documentation/examples.md).
-- [Troubleshooting](documentation/troubleshooting.md).
-- [Release notes](documentation/release-notes.md).
-
-Build locally with `make docs` or preview with `make docs-serve`.
-
-## License
-
-PrettyData is licensed under [Apache License 2.0](LICENSE). See [NOTICE](NOTICE)
-for copyright and attribution, including reused repository infrastructure.

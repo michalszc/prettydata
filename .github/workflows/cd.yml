@@ -1,0 +1,58 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches:
+      - master
+    types:
+      - completed
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: >-
+      ${{ github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.event == 'push' &&
+          github.event.workflow_run.head_branch == 'master' &&
+          github.event.workflow_run.head_repository.full_name == github.repository }}
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v7
+      with:
+        ref: ${{ github.event.workflow_run.head_sha }}
+        persist-credentials: false
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+        cache-dependency-path: 'pyproject.toml'
+
+    - name: Install dependencies
+      run: make install INSTALL_ARGS='--group build'
+
+    - name: Build package
+      run: make build
+
+    - name: Check build
+      run: make check-build
+
+    - name: Record deployment identity
+      env:
+        DEPLOYED_SHA: ${{ github.event.workflow_run.head_sha }}
+      run: make release-metadata
+
+    - name: Upload deployment identity
+      uses: actions/upload-artifact@v7
+      with:
+        name: release-metadata
+        path: release-metadata.json
+        if-no-files-found: error
+
+    - name: Publish to PyPI
+      run: make ci-publish
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}

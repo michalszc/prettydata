@@ -8,6 +8,9 @@
 - Added editable DataFrame-backed tables, data imports/exports, and themed
   PNG/PDF/SVG rendering.
 
+- Added line, bar, scatter, histogram, box, and pie charts with shared themes,
+  pandas/Table inputs, matplotlib customization, and graphical exports.
+
 ## 0.0.0 — 2026-10-17
 
 - Established the minimal typed package, development tooling, smoke tests,

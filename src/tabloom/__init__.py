@@ -1,4 +1,4 @@
-"""Tabloom: foundations for visually appealing tables, charts, and reports."""
+"""Tabloom: visually appealing tables, charts, and PDF reports with simple defaults."""
 
 from tabloom.chart import Chart
 from tabloom.report import Report

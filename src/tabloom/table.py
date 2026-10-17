@@ -93,7 +93,7 @@ class Table:
             font_size, cell_alignment, and relative column_widths.
         figsize: Optional figure width and height in inches.
         copy: Copy an incoming DataFrame by default. With False, share it until
-            a structural edit replaces the underlying frame.
+            an editing method replaces the underlying frame.
     """
 
     def __init__(  # noqa: PLR0913 - explicit construction and presentation options

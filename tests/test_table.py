@@ -104,7 +104,7 @@ def test_inference_partial_rows_and_index_preservation() -> None:
         (lambda t: t.remove_row("0"), TypeError),
         (lambda t: t.rename_column("missing", "C"), KeyError),
         (lambda t: t.rename_column("A", "B"), ValueError),
-        (lambda t: t.update_row(0, {"A": 8, "B": "bad"}), TypeError),
+        (lambda t: t.update_row(0, {"A": 8, "B": [2, 3]}), ValueError),
     ],
 )
 def test_invalid_edit_is_atomic(operation: Any, error: type[Exception]) -> None:

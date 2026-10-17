@@ -1,9 +1,61 @@
 # Core Concepts
 
-!!! note "Coming in a future milestone"
+## Tables own data
 
-    Tabloom 0.0.0 establishes repository infrastructure. Its table, chart, and
-    report concepts and APIs have not been designed or implemented yet.
+A `Table` wraps one pandas DataFrame, exposed as `table.df`. Table editing methods
+modify the instance and return it for chaining. Rows in `update_row` and
+`remove_row` use nonnegative, zero-based **positions**, even when the DataFrame
+has custom or duplicate index labels. Other rows retain their index labels.
 
-This page is reserved for the concepts needed to use future implemented features.
-For now, follow the [quick start](quickstart.md) to verify the package import.
+DataFrames are copied on construction by default. `copy=False` shares the exact
+frame until a Table editing method replaces it. `to_dataframe()` returns a copy;
+`to_dataframe(copy=False)` returns the same object as `.df`.
+
+```python
+import pandas as pd
+from tabloom import Table
+
+frame = pd.DataFrame({"Score": [85, 92]}, index=["Alice", "Bob"])
+table = Table.from_dataframe(frame)
+table.update_row(0, {"Score": 90})  # First row, whose index label is Alice.
+assert frame.loc["Alice", "Score"] == 85
+assert table.df.loc["Alice", "Score"] == 90
+snapshot = table.to_dataframe()
+assert snapshot is not table.df
+```
+
+Use normal pandas operations through `.df` for filtering, sorting, dtype changes,
+and label-based indexing. Rendered tables always use the current data.
+
+## Data exports and visual exports
+
+`to_csv`, `to_excel`, `to_json`, and `to_dataframe` export **data** without visual
+styling. CSV and Excel omit the index by default; JSON defaults to records.
+Pass pandas options to change these defaults. These formats do not universally
+preserve pandas dtypes or index metadata.
+
+`save` on a Table or Chart exports a **visual** as PNG, PDF, or SVG. PNG accepts
+DPI control; PDF and SVG retain vector text and graphics where matplotlib can.
+
+## Charts own figures
+
+Chart factories create a Figure and Axes without forcing display. Access them as
+`chart.fig` and `chart.ax`. Charts plot the supplied data when created; subsequent
+DataFrame edits do not automatically redraw chart artists.
+
+Saving leaves a chart available for customization and reuse. When finished,
+close it explicitly with `matplotlib.pyplot.close(chart.fig)`. A Table's
+`render()` returns a fresh Figure/Axes pair owned by the caller; Table.save
+cleans up its own temporary figure.
+
+## Reports reuse visuals
+
+Reports retain references to supplied objects and preserve insertion order.
+Saving renders tables from current data and uses the current chart figures.
+Report saving never closes caller-owned charts or separately rendered tables.
+
+The report theme controls text and cover pages. Existing tables and charts retain
+their own theme and customizations; select the same theme on each object for a
+uniform report. Text paginates automatically. Each visual occupies a separate
+page at its own dimensions; complex page layout and table pagination are outside
+v0.1.0.

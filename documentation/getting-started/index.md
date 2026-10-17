@@ -1,7 +1,11 @@
 # Getting Started
 
-Tabloom requires Python 3.12 or newer. Version 0.0.0 provides the repository
-foundation, with pandas and matplotlib as its initial dependencies.
+Tabloom requires Python 3.12 or newer. Its main API is:
 
-Start with [installation](installation.md), then [verify the import](quickstart.md).
-There is no feature API to demonstrate yet.
+- `Table`: edit a pandas DataFrame and render it as a styled table.
+- `Chart`: create line, bar, scatter, histogram, box, and pie charts.
+- `Report`: combine text, tables, and charts into a multipage PDF.
+
+Start with [installation](installation.md), then follow the
+[quick start](quickstart.md). Learn how data and visuals relate in
+[core concepts](core-concepts.md).

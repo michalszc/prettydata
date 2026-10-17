@@ -1,7 +1,8 @@
 # Contributing to Tabloom
 
-Tabloom 0.0.0 is a repository infrastructure milestone. Feature development
-will follow; proposals should not assume an existing table, chart, or report API.
+Tabloom 0.1.0 provides DataFrame-backed tables, matplotlib chart factories, and
+PDF report composition. Preserve the public Table, Chart, and Report APIs when
+extending the library.
 
 ## Development environment
 
@@ -49,7 +50,8 @@ failures fail the online check.
 Use `make lint-fix` and `make format` to apply fixes. Ruff and mypy cover source,
 tests, and Python maintenance scripts. Pytest uses strict discovery and markers,
 terminal coverage, and an HTML report in `htmlcov/`. The threshold is 97%.
-The initial package only has metadata, so coverage does not indicate features.
+Feature tests run headlessly and cover data editing, visual exports, and PDF
+composition as well as the existing infrastructure contracts.
 
 ```bash
 make test-verbose
@@ -89,11 +91,11 @@ The underlying check's output is saved in its `*_output.txt` file.
 
 `make docs` builds with strict MkDocs checks. `make docs-serve` starts a local
 preview at `http://127.0.0.0:8000`; stop it with Ctrl+C. Document current behavior
-and expose real APIs through mkdocstrings as they are added.
+and expose real APIs through mkdocstrings alongside implementation changes.
 
 `make notebooks-check` validates saved outputs without executing cells. The basic
-usage notebook verifies package import and version output. Examples must record
-the current version, execution counts, and error-free outputs. Installation cells
+usage notebook demonstrates table editing, charts, and PDF composition. Examples
+must record the current version, execution counts, and error-free outputs. Installation cells
 remain unexecuted.
 An empty directory passes; invalid requested paths fail.
 

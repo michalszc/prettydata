@@ -2,17 +2,18 @@
 
 ## 0.1.0 — Unreleased
 
-- Added shared visual themes and scoped matplotlib rendering foundations in
+-  Added shared visual themes and scoped matplotlib rendering foundations in
   [PR #5](https://github.com/michalszc/tabloom/pull/5).
-
 - Added editable DataFrame-backed tables, data imports/exports, and themed
   PNG/PDF/SVG rendering.
-
 - Added line, bar, scatter, histogram, box, and pie charts with shared themes,
   pandas/Table inputs, matplotlib customization, and graphical exports.
-
 - Added ordered PDF reports with cover pages, wrapped/paginated text, and
   reusable table/chart pages without external LaTeX.
+- Added executable quick-start documentation, a complete API reference, and
+  an executed example notebook.
+- Excel support targets `.xlsx`; reports place each visual on a separate page.
+  Complex document layout and table pagination remain outside this release.
 
 ## 0.0.0 — 2026-10-17
 

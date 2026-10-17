@@ -1,6 +1,6 @@
 site_name: Tabloom
 site_description: >-
-  A Python library being developed for visually appealing tables, charts,
+  A Python library for visually appealing tables, charts,
   and reports with minimal configuration.
 site_url: https://michalszc.github.io/tabloom/
 repo_url: https://github.com/michalszc/tabloom

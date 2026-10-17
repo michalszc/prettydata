@@ -379,7 +379,9 @@ def test_make_ci_publish_reports_mocked_upload(tmp_path: Path, exit_code: int) -
     make = binary / "make"
     make.write_text(
         '#!/bin/sh\nprintf "%s\\n" "$*" >> publish-called\n'
-        f"echo mocked-upload-result\nexit {exit_code}\n",
+        'echo "Response from https://upload.pypi.org/legacy/:"\n'
+        'echo "400 Bad Request: fixture rejection reason"\n'
+        f"exit {exit_code}\n",
     )
     make.chmod(0o755)
     summary = tmp_path / "summary.md"
@@ -396,12 +398,15 @@ def test_make_ci_publish_reports_mocked_upload(tmp_path: Path, exit_code: int) -
         check=False,
     )
     assert (result.returncode == 0) is (exit_code == 0), result.stderr
-    assert (tmp_path / "publish-called").read_text().splitlines() == ["publish"]
+    assert (tmp_path / "publish-called").read_text().splitlines() == [
+        "publish TWINE_UPLOAD_ARGS=--verbose --non-interactive --disable-progress-bar",
+    ]
     content = summary.read_text()
     if exit_code == 0:
         assert "Package published successfully" in content
         assert "https://pypi.org/project/prettydata/0.1.0/" in content
     else:
         assert "Publishing failed" in content
-        assert "mocked-upload-result" in content
+        assert "400 Bad Request: fixture rejection reason" in content
+        assert "400 Bad Request: fixture rejection reason" in result.stdout
         assert "Package published successfully" not in content

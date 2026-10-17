@@ -4,6 +4,7 @@
 PYTHON ?= python
 INSTALL_ARGS ?=
 INSTALL_HOOKS ?= 1
+TWINE_UPLOAD_ARGS ?=
 TEST_PATH ?= tests/
 PYTEST_ARGS ?=
 VALIDATE_VERSION_ARGS ?=
@@ -50,10 +51,10 @@ build: ## Build package for distribution
 	$(PYTHON) -m build
 
 publish-test: ## Publish to TestPyPI
-	$(PYTHON) -m twine upload --repository testpypi dist/*
+	$(PYTHON) -m twine upload --repository testpypi $(TWINE_UPLOAD_ARGS) dist/*
 
 publish: ## Publish to PyPI
-	$(PYTHON) -m twine upload dist/*
+	$(PYTHON) -m twine upload $(TWINE_UPLOAD_ARGS) dist/*
 
 ci-publish: ## Publish to PyPI with a CI summary
 	@PYTHON="$(PYTHON)" bash scripts/ci/publish.sh

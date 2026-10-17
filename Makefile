@@ -1,9 +1,10 @@
-.PHONY: help install install-dev test test-verbose lint lint-fix format format-check type-check clean
+.PHONY: help install install-dev test test-verbose lint lint-fix format format-check type-check build check-build publish-test publish validate-version release-metadata release-select-commit release clean
 .DEFAULT_GOAL := help
 
 PYTHON ?= python
 TEST_PATH ?= tests/
 PYTEST_ARGS ?=
+VALIDATE_VERSION_ARGS ?=
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -23,19 +24,43 @@ test-verbose: ## Run tests with verbose output
 	$(PYTHON) -m pytest $(TEST_PATH) $(PYTEST_ARGS) -v --cov=src/prettydata --cov-report=term-missing
 
 lint: ## Run linting (ruff check)
-	$(PYTHON) -m ruff check src/ tests/
+	$(PYTHON) -m ruff check src/ tests/ scripts/
 
 lint-fix: ## Run linting with auto-fix
-	$(PYTHON) -m ruff check --fix src/ tests/
+	$(PYTHON) -m ruff check --fix src/ tests/ scripts/
 
 format: ## Format code (ruff format)
-	$(PYTHON) -m ruff format src/ tests/
+	$(PYTHON) -m ruff format src/ tests/ scripts/
 
 format-check: ## Check code formatting without making changes
-	$(PYTHON) -m ruff format --diff src/ tests/
+	$(PYTHON) -m ruff format --diff src/ tests/ scripts/
 
 type-check: ## Run type checking (mypy)
-	$(PYTHON) -m mypy src/prettydata/ tests/
+	$(PYTHON) -m mypy src/prettydata/ tests/ scripts/
+
+build: ## Build package for distribution
+	$(PYTHON) -m build
+
+publish-test: ## Publish to TestPyPI
+	$(PYTHON) -m twine upload --repository testpypi dist/*
+
+publish: ## Publish to PyPI
+	$(PYTHON) -m twine upload dist/*
+
+check-build: ## Check if build is ready for publishing
+	$(PYTHON) -m twine check dist/*
+
+release-metadata: ## Record the current commit and package version without publishing
+	$(PYTHON) scripts/release.py metadata --output "$(or $(RELEASE_METADATA),release-metadata.json)"
+
+release-select-commit: ## Select the deployed commit from validated CD metadata
+	$(PYTHON) scripts/release.py select-commit --metadata "$(or $(RELEASE_METADATA),release-metadata.json)"
+
+release: ## Publish a GitHub release for the checkout recorded in deployment metadata
+	$(PYTHON) scripts/release.py publish --metadata "$(or $(RELEASE_METADATA),release-metadata.json)" --project "$(or $(RELEASE_PROJECT),.)" --repository "$(or $(RELEASE_REPOSITORY),$(GITHUB_REPOSITORY))"
+
+validate-version: ## Check project versions, release notes, and PyPI
+	@PYTHON="$(PYTHON)" bash scripts/validate_version.sh $(VALIDATE_VERSION_ARGS)
 
 clean: ## Clean artifacts
 	rm -rf build/
@@ -48,5 +73,5 @@ clean: ## Clean artifacts
 	rm -rf .mypy_cache/
 	rm -rf .ruff_cache/
 	rm -rf docs/
-	find src tests -type d -name __pycache__ -exec rm -rf {} +
-	find src tests -name '*.py[co]' -delete
+	find src tests scripts -type d -name __pycache__ -exec rm -rf {} +
+	find src tests scripts -name '*.py[co]' -delete

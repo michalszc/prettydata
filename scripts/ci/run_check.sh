@@ -142,7 +142,7 @@ case "$1" in
             "Static Notebook Check" \
             "make notebooks-check" \
             "notebooks_output.txt" \
-            "Notebook validation passed (including an empty examples directory)." \
+            "Notebook validation passed." \
             "Static notebook validation failed!" \
             "Run \`make notebooks-check\`; update and manually rerun only the affected notebook"
         ;;

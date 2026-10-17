@@ -1,10 +1,12 @@
 # PrettyData
 
 <p align="center">
+  <a href="https://pypi.org/project/prettydata/"><img src="https://img.shields.io/pypi/v/prettydata" alt="PyPI version"></a>
+  <a href="https://pypi.org/project/prettydata/"><img src="https://img.shields.io/pypi/dm/prettydata" alt="PyPI monthly downloads"></a>
   <a href="https://github.com/michalszc/prettydata/blob/master/pyproject.toml"><img src="https://img.shields.io/badge/python-3.12%2B-important" alt="Python 3.12 or newer"></a>
   <a href="https://github.com/michalszc/prettydata/actions/workflows/ci.yml"><img src="https://github.com/michalszc/prettydata/actions/workflows/ci.yml/badge.svg?branch=master" alt="CI on master"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License: Apache 2.0"></a>
-  <a href="https://michalszc.github.io/prettydata/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue.svg" alt="Documentation"></a>
+  <a href="https://michalszc.github.io/prettydata/"><img src="https://img.shields.io/badge/docs-online-blue.svg" alt="Docs"></a>
 </p>
 
 A Python library being developed for visually appealing tables, charts, and
@@ -46,26 +48,9 @@ The PyPI distribution and Python import names are both `prettydata`.
 
 ## Development
 
-Using the existing `.venv`, with pip 25.1 or newer:
-
-```bash
-source .venv/bin/activate
-make install-dev
-make test
-make lint
-make format-check
-make type-check
-make validate-version VALIDATE_VERSION_ARGS=--offline
-make docs
-make notebooks-check
-```
-
-`make help` lists the available commands. Select tests without editing the Makefile:
-
-```bash
-make test TEST_PATH=tests/contracts/package/test_package.py
-make test PYTEST_ARGS="-k import"
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for environment setup, quality checks, and
+the release workflow. Issues and feature requests are welcome in the
+[GitHub repository](https://github.com/michalszc/prettydata/issues).
 
 ## Documentation
 
@@ -79,12 +64,6 @@ make test PYTEST_ARGS="-k import"
 - [Release notes](documentation/release-notes.md).
 
 Build locally with `make docs` or preview with `make docs-serve`.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for environment setup, quality checks,
-pull requests, and the release workflow. Issues and feature proposals are welcome
-in the [repository](https://github.com/michalszc/prettydata/issues).
 
 ## License
 

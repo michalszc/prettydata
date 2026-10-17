@@ -38,7 +38,7 @@ def _new_figure(
     fig.set_facecolor(theme.background)
     ax.set_facecolor(theme.background)
     ax.set_prop_cycle(color=theme.palette)
-    ax.tick_params(colors=theme.muted, labelsize=fontsize - 1)
+    ax.tick_params(colors=theme.muted, labelsize=max(1, fontsize - 1))
     for spine in ax.spines.values():
         spine.set_color(theme.grid)
     ax.spines[["top", "right"]].set_visible(False)

@@ -5,6 +5,9 @@
 - Added shared visual themes and scoped matplotlib rendering foundations in
   [PR #5](https://github.com/michalszc/tabloom/pull/5).
 
+- Added editable DataFrame-backed tables, data imports/exports, and themed
+  PNG/PDF/SVG rendering.
+
 ## 0.0.0 — 2026-10-17
 
 - Established the minimal typed package, development tooling, smoke tests,

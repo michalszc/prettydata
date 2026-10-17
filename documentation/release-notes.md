@@ -11,6 +11,9 @@
 - Added line, bar, scatter, histogram, box, and pie charts with shared themes,
   pandas/Table inputs, matplotlib customization, and graphical exports.
 
+- Added ordered PDF reports with cover pages, wrapped/paginated text, and
+  reusable table/chart pages without external LaTeX.
+
 ## 0.0.0 — 2026-10-17
 
 - Established the minimal typed package, development tooling, smoke tests,

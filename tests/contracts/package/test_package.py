@@ -1,7 +1,6 @@
-"""Smoke tests for the installed package and its metadata."""
+"""Smoke tests for package imports and source metadata."""
 
 import tomllib
-from importlib.metadata import version
 from importlib.resources import files
 from pathlib import Path
 
@@ -16,12 +15,12 @@ def test_package_import() -> None:
 
 
 def test_package_version() -> None:
-    """Installed metadata and the initializer match the declared version."""
+    """Runtime version and authors match the current source configuration."""
+    # Editable-install metadata is a snapshot; read the current source metadata.
     with (ROOT / "pyproject.toml").open("rb") as stream:
         project = tomllib.load(stream)["project"]
 
     assert prettydata.__version__ == project["version"]
-    assert version("prettydata") == project["version"]
     assert prettydata.__author__ == [author["name"] for author in project["authors"]]
 
 

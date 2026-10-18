@@ -1,6 +1,6 @@
 # Release Notes
 
-## 0.1.0 — Unreleased
+## 0.1.0 — 2026-10-18
 
 - Added an executed Excel sales notebook using Microsoft's cached sample workbook,
   worksheet/column/date selection, pandas summaries, line and pie charts, and

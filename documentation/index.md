@@ -21,6 +21,6 @@ report.save("experiment.pdf")
 - [Core Concepts](getting-started/core-concepts.md): data, visuals, and ownership.
 - [Guides](guides/index.md): editing, external files, charts, themes, and reports.
 - [API Reference](reference/index.md): the public classes and methods.
-- [Examples](examples.md): basic usage and a complete large-dataset report, with Colab links.
+- [Examples](examples.md): basic usage, a complete large-dataset report, and Excel analysis with line/pie charts, with Colab links.
 - [Troubleshooting](troubleshooting.md): input, export, and display errors.
 - [Release Notes](release-notes.md): changes grouped by version.

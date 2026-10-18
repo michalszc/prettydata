@@ -2,6 +2,11 @@
 
 ## 0.1.0 — Unreleased
 
+- Added an executed Excel sales notebook using Microsoft's cached sample workbook,
+  worksheet/column/date selection, pandas summaries, line and pie charts, and
+  Excel/PNG/vector-PDF exports with offline integration coverage in
+  [PR #5](https://github.com/michalszc/tabloom/pull/5).
+
 - Added non-mutating head/tail table previews; show displays the first 10 rows
   by default, while render and exports continue to include complete data.
 - Added numeric scatter hue, automatic labeled colorbars, and optional fitted

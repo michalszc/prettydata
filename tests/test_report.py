@@ -1,5 +1,6 @@
 """Readable multipage reports, insertion order, pagination, and ownership."""
 
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -8,9 +9,26 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
 from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib.font_manager import fontManager
 from pypdf import PdfReader, PdfWriter
 
 from tabloom import Chart, Report, Table
+
+
+@pytest.mark.parametrize("theme", ["default", "light", "dark"])
+def test_report_fonts_do_not_require_weight_fallback(
+    theme: str, tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Render headings and body text without notebook-visible font warnings."""
+    # Cached font matches would hide warnings when earlier tests use the same font.
+    fontManager._findfont_cached.cache_clear()  # type: ignore[attr-defined]  # noqa: SLF001
+    path = tmp_path / "fonts.pdf"
+    with caplog.at_level(logging.WARNING, logger="matplotlib.font_manager"):
+        Report("Report heading", theme=theme).add_text("Report body").save(path)
+    assert not caplog.records
+    text = PdfReader(path).pages[0].extract_text()
+    assert "Report heading" in text
+    assert "Report body" in text
 
 
 def test_empty_and_title_only(tmp_path: Path) -> None:

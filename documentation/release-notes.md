@@ -30,6 +30,8 @@
 
 - Made report content fill remaining page space in order, with inline titles,
   text continuation, and optional add_page_break boundaries.
+- Used the bundled DejaVu Sans bold weight for report headings to avoid font
+  fallback warnings during notebook exports.
 
 ## 0.0.0 — 2026-10-17
 

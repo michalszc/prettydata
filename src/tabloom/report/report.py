@@ -135,7 +135,7 @@ class Report:
     ) -> None:
         """Wrap text and render only the lines that fit the current page."""
         font_size = 24 if heading else 12
-        weight = "semibold" if heading else "normal"
+        weight = "bold" if heading else "normal"
         line_height = font_size * 1.5
         if line_height > composer.content_height:
             message = "The printable page area is too small for report text."

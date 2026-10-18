@@ -1,7 +1,8 @@
 # Contributing to Tabloom
 
-Tabloom 0.0.0 is a repository infrastructure milestone. Feature development
-will follow; proposals should not assume an existing table, chart, or report API.
+Tabloom 0.1.0 provides DataFrame-backed tables, matplotlib chart factories, and
+PDF report composition. Preserve the public Table, Chart, and Report APIs when
+extending the library.
 
 ## Development environment
 
@@ -49,7 +50,30 @@ failures fail the online check.
 Use `make lint-fix` and `make format` to apply fixes. Ruff and mypy cover source,
 tests, and Python maintenance scripts. Pytest uses strict discovery and markers,
 terminal coverage, and an HTML report in `htmlcov/`. The threshold is 97%.
-The initial package only has metadata, so coverage does not indicate features.
+Feature tests run headlessly and mirror the package directories under
+`src/tabloom/`: `tests/table/`, `tests/chart/` (including `plots/`),
+`tests/report/`, `tests/rendering/`, `tests/themes/`, and `tests/validation/`.
+Place new tests beside the corresponding source area, with a `test_` prefix on
+the module name, such as `tests/report/test_table_pages.py` for
+`src/tabloom/report/table_pages.py`. Public-object tests may exercise several
+helpers together; a separate test file for every private helper is not required.
+
+Cross-cutting compatibility and repository checks belong in `tests/contracts/`:
+`public_api/` protects imports and user workflows, `package/` checks metadata and
+module structure, `documentation/` checks generated references and executable
+examples, `notebooks/` validates saved notebooks and executes them offline, and
+`release/` covers version validation and automation. Shared headless-backend and
+figure-cleanup fixtures remain in `tests/conftest.py`.
+
+`tests/contracts/public_api/manifest.py` records the v0.1.0 import paths, method
+signatures, and API reference locations independently of the implementation.
+These contracts permit new optional parameters and exports while detecting
+removed methods, changed defaults, new required arguments, or moved positional
+parameters. Update the manifest deliberately when changing the supported API;
+do not regenerate it from the live implementation. Every protected method must
+also remain linked in the generated reference. Fresh-process import checks
+ensure notebook/development tools are optional and imports create no figures or
+output files. Shared input validators have focused tests in `tests/validation/`.
 
 ```bash
 make test-verbose
@@ -77,7 +101,8 @@ The underlying check's output is saved in its `*_output.txt` file.
 ## Repository organization
 
 - `src/tabloom/`: importable package and PEP 561 typed marker.
-- `tests/contracts/`: package and repository infrastructure tests.
+- `tests/`: feature tests mirroring the library's package directories.
+- `tests/contracts/`: public API, package, documentation, notebook, and release contracts.
 - `documentation/`: MkDocs sources, API templates, and release notes.
 - `docs/`: generated site, ignored by Git.
 - `notebooks/`: example notebooks.
@@ -89,11 +114,11 @@ The underlying check's output is saved in its `*_output.txt` file.
 
 `make docs` builds with strict MkDocs checks. `make docs-serve` starts a local
 preview at `http://127.0.0.0:8000`; stop it with Ctrl+C. Document current behavior
-and expose real APIs through mkdocstrings as they are added.
+and expose real APIs through mkdocstrings alongside implementation changes.
 
 `make notebooks-check` validates saved outputs without executing cells. The basic
-usage notebook verifies package import and version output. Examples must record
-the current version, execution counts, and error-free outputs. Installation cells
+usage notebook demonstrates table editing, charts, and PDF composition. Examples
+must record the current version, execution counts, and error-free outputs. Installation cells
 remain unexecuted.
 An empty directory passes; invalid requested paths fail.
 

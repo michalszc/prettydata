@@ -1,4 +1,10 @@
-"""Tabloom: foundations for visually appealing tables, charts, and reports."""
+"""Tabloom: visually appealing tables, charts, and PDF reports with simple defaults."""
 
-__version__ = "0.0.0"
+from tabloom.chart import Chart
+from tabloom.report import Report
+from tabloom.table import Table
+
+__all__ = ["Chart", "Report", "Table"]
+
+__version__ = "0.1.0"
 __author__ = ["Michal Szczygiel"]

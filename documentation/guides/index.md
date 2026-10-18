@@ -1,10 +1,13 @@
 # Guides
 
-!!! note "Coming in a future milestone"
+Choose an area for complete, executable workflows. Constructor signatures and
+method contracts live in the [API reference](../reference/index.md).
 
-    Workflow guides will be added alongside implemented Tabloom features.
-    Version 0.0.0 has no table, chart, import, export, or PDF workflows yet.
-
-Future guides will explain complete user workflows and their trade-offs, including
-when to use defaults and how to customize underlying pandas and matplotlib objects.
-See [Getting Started](../getting-started/index.md) for the current package basics.
+| Area | Guide |
+| --- | --- |
+| Tables | [Create tables and edit rows and columns](tables.md) |
+| Data files | [Load and export CSV, Excel, and JSON](data.md) |
+| Charts | [Create and customize the six chart types](charts.md) |
+| Styling | [Choose themes and style tables](themes.md) |
+| Visual exports | [Save PNG, PDF, and SVG](exports.md) |
+| Reports | [Combine text, tables, and charts into a PDF](reports.md) |

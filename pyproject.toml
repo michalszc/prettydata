@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tabloom"
-version = "0.0.0"
+version = "0.1.0"
 description = "A Python library for visually appealing tables, charts, and reports with minimal configuration."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -15,7 +15,7 @@ authors = [
 ]
 keywords = ["tables", "charts", "reports", "pandas", "matplotlib", "visualization"]
 classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python :: 3",
@@ -29,6 +29,8 @@ classifiers = [
 dependencies = [
     "pandas>=2.2.0",
     "matplotlib>=3.10.7",
+    "openpyxl>=3.1.5",
+    "pypdf>=6.0",
 ]
 
 [project.optional-dependencies]
@@ -49,6 +51,7 @@ lint = [
     # Keep the CLI and pre-commit hooks on the same Ruff release.
     "ruff==0.14.6",
     "mypy>=1.0.0",
+    "pandas-stubs",
     "pre-commit>=3.0.0",
 ]
 build = [

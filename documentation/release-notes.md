@@ -1,5 +1,75 @@
 # Release Notes
 
+## 0.1.0 — 2026-10-18
+
+- Protected public imports, signatures, forwarding hooks, typing, reference
+  anchors, and import side effects with explicit compatibility contracts. Added
+  package-layout checks and focused shared-validator tests in
+  [PR #5](https://github.com/michalszc/tabloom/pull/5).
+
+- Organized feature tests to mirror the library packages and grouped documentation,
+  notebook, public-workflow, and module-structure checks under contracts in
+  [PR #5](https://github.com/michalszc/tabloom/pull/5).
+
+- Added an executed Excel sales notebook using Microsoft's cached sample workbook,
+  worksheet/column/date selection, pandas summaries, line and pie charts, and
+  Excel/PNG/vector-PDF exports with offline integration coverage in
+  [PR #5](https://github.com/michalszc/tabloom/pull/5).
+
+- Added non-mutating head/tail table previews; show displays the first 10 rows
+  by default, while render and exports continue to include complete data.
+- Added numeric scatter hue, automatic labeled colorbars, and optional fitted
+  association lines with matplotlib customization and no extra dependencies.
+- Paginated long report tables automatically with repeated headers, stable
+  column proportions, complete rows, and no generated captions. Added
+  paginate=False for whole-table fitting and simplified the large-data notebook.
+- Made plain black-and-white tables the default, retaining the original colored
+  appearance with `theme="blue"` and in the basic example notebook.
+- Named themes for their appearance: plain, blue, soft_blue, and dark_blue;
+  charts and reports default to blue, while tables default to plain.
+- Added an executed wine-quality notebook with a cached UCI CSV download,
+  1,599 observations, plain wide tables, three advanced chart examples, and a
+  complete report table that paginates automatically.
+- Ignored notebook output directories and common image/data exports, including
+  PDF, PNG, SVG, CSV, Excel, JSON, and columnar formats, without ignoring source
+  notebooks or assets elsewhere in the project.
+-  Added shared visual themes and scoped matplotlib rendering foundations in
+  [PR #5](https://github.com/michalszc/tabloom/pull/5).
+- Added editable DataFrame-backed tables, data imports/exports, and themed
+  PNG/PDF/SVG rendering.
+- Added line, bar, scatter, histogram, box, and pie charts with shared themes,
+  pandas/Table inputs, matplotlib customization, and graphical exports.
+- Added ordered PDF reports with flowing text, reusable tables/charts,
+  automatic pagination, and explicit page breaks without external LaTeX.
+- Added executable quick-start documentation, a complete API reference, and
+  an executed example notebook.
+- Excel support targets `.xlsx`; charts and individual table rows remain intact.
+  Complex document layout and splitting a cell across pages remain outside this release.
+
+- Organized implementation into focused feature packages, with at most one
+  top-level class or function per module and documented internal responsibilities.
+
+- Split API reference and workflow guides into separate table, chart, report,
+  data, theme, and export areas with concise overview maps.
+
+- Made Table.show and Chart.show display figures directly in notebooks without
+  intermediate image files, and refreshed the executed example notebook.
+
+- Standardized PDF report paper size (A4 by default) with configurable dimensions
+  and margins, preserving vector visuals and the original chart layouts.
+- Promoted the existing pypdf dependency to runtime for vector page composition.
+
+- Made report content fill remaining page space in order, with inline titles,
+  text continuation, and optional add_page_break boundaries.
+- Used the bundled DejaVu Sans bold weight for report headings to avoid font
+  fallback warnings during notebook exports.
+- Cleaned up pyplot registration automatically after notebook display while
+  preserving chart reuse, removing manual cleanup from the example notebook.
+- Exposed per-block report text fonts, size, weight, style, color, alignment,
+  line spacing, and spacing after text, with matching wrapping and pagination.
+- Made report tables and charts full width by default, with fractional-width
+  and original-size overrides that preserve vector output and aspect ratios.
+
 ## 0.0.0 — 2026-10-17
 
 - Established the minimal typed package, development tooling, smoke tests,

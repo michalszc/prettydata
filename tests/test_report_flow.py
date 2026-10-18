@@ -13,9 +13,9 @@ def test_title_and_mixed_content_share_a_page(tmp_path: Path) -> None:
     path = tmp_path / "flow.pdf"
     table = Table({"Model": ["A", "B"], "Score": [85, 92]}, title="TABLE")
     chart = Chart.bar(data=table, x="Model", y="Score", title="CHART")
-    Report("HEADING").add_text("INTRO").add_table(table).add_chart(chart).add_text(
-        "END"
-    ).save(path)
+    Report("HEADING").add_text("INTRO").add_table(table, resize="original").add_chart(
+        chart, resize="original"
+    ).add_text("END").save(path)
     reader = PdfReader(path)
     assert len(reader.pages) == 1
     text = reader.pages[0].extract_text()
@@ -31,7 +31,7 @@ def test_visual_moves_only_when_remaining_space_is_insufficient(tmp_path: Path) 
     chart = Chart.line([1, 2], [2, 3], title="CHART", figsize=(4, 2.5))
     report = Report(figsize=(6, 4.5), margin=0.5)
     report.add_text("INTRO\n" + "A line of text.\n" * 4)
-    report.add_chart(chart).add_text("AFTER")
+    report.add_chart(chart, resize="original").add_text("AFTER")
     report.save(path)
     pages = [page.extract_text() for page in PdfReader(path).pages]
     assert len(pages) == 2
@@ -44,7 +44,7 @@ def test_visual_moves_only_when_remaining_space_is_insufficient(tmp_path: Path) 
 def test_text_uses_space_below_a_visual_before_continuing(tmp_path: Path) -> None:
     path = tmp_path / "text-flow.pdf"
     report = Report(figsize=(6, 4), margin=0.5)
-    report.add_table(Table({"A": [1]}, title="BEFORE"))
+    report.add_table(Table({"A": [1]}, title="BEFORE"), resize="original")
     report.add_text("\n".join(f"Unique line {i:02d}" for i in range(10)))
     report.save(path)
     pages = [page.extract_text() for page in PdfReader(path).pages]
@@ -62,7 +62,9 @@ def test_multiple_small_visuals_share_space(tmp_path: Path) -> None:
     path = tmp_path / "visuals.pdf"
     table = Table({"A": [1]}, title="TABLE")
     chart = Chart.scatter([1, 2], [2, 3], title="CHART", figsize=(3, 2))
-    Report().add_table(table).add_chart(chart).add_table(table).save(path)
+    Report().add_table(table, resize="original").add_chart(
+        chart, resize="original"
+    ).add_table(table, resize="original").save(path)
     reader = PdfReader(path)
     assert len(reader.pages) == 1
     text = reader.pages[0].extract_text()

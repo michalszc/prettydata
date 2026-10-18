@@ -1,7 +1,9 @@
 # Reports API
 
 Content fills the remaining page space in insertion order. Use `add_page_break()`
-for an explicit boundary. See the [report guide](../guides/reports.md) for
+for an explicit boundary. `add_text` exposes typography and spacing; `add_table`
+and `add_chart` accept `resize="full"` (default), width fractions, or `"original"`.
+See the [report guide](../guides/reports.md) for styled text, visual sizing,
 automatic pagination, paper settings, and cover-page examples.
 
 ::: tabloom.report

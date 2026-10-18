@@ -34,7 +34,7 @@ def test_document_examples(
     if document.name == "README.md":
         assert (tmp_path / "results.png").read_bytes().startswith(b"\x89PNG")
         assert (tmp_path / "comparison.png").read_bytes().startswith(b"\x89PNG")
-        assert len(PdfReader(tmp_path / "experiment_report.pdf").pages) == 1
+        assert len(PdfReader(tmp_path / "experiment_report.pdf").pages) == 2
 
 
 def test_requested_workflow(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -55,9 +55,9 @@ def test_requested_workflow(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> 
     report.add_chart(chart)
     report.save("experiment_report.pdf")
     reader = PdfReader("experiment_report.pdf")
-    assert len(reader.pages) == 1
+    assert len(reader.pages) == 2
     assert "Model A" in reader.pages[0].extract_text()
-    assert "Model Comparison" in reader.pages[0].extract_text()
+    assert "Model Comparison" in reader.pages[1].extract_text()
     assert plt.fignum_exists(chart.fig.number)
 
 
@@ -79,4 +79,4 @@ def test_notebook_code(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
             source = "".join(cell["source"])
             assert "plt.close" not in source
             exec(compile(source, "basic_usage.ipynb", "exec"), namespace)
-    assert len(PdfReader("experiment_report.pdf").pages) == 1
+    assert len(PdfReader("experiment_report.pdf").pages) == 2

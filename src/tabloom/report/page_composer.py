@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from io import BytesIO
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Literal, Self
 
 from matplotlib.colors import to_rgb
 from pypdf import PdfReader, PdfWriter, Transformation
@@ -18,9 +18,9 @@ if TYPE_CHECKING:
 class _PageComposer:
     """Place ordered PDF blocks top to bottom, advancing only when necessary.
 
-    Dimensions are in points internally. Small visuals keep their native scale;
-    oversized blocks shrink only enough to fit a fresh page, never merely to
-    squeeze into an occupied page's remaining space. Source readers remain open
+    Dimensions are in points internally. Visuals scale to the requested width,
+    bounded by a fresh page's height; they never shrink merely to squeeze into
+    an occupied page's remaining space. Source readers remain open
     until writing completes so vector resources and fonts remain available.
     """
 
@@ -77,14 +77,31 @@ class _PageComposer:
         if self._page is not None:
             self._break_requested = True
 
-    def add_pdf(self, data: bytes) -> None:
-        """Place each native PDF page as a vector block with 12-point spacing."""
+    def add_pdf(
+        self,
+        data: bytes,
+        *,
+        resize: Literal["full", "original"] | float = "original",
+        space_after: float = 12,
+    ) -> None:
+        """Place PDF blocks at a requested width, preserving their aspect ratios.
+
+        Full width and fractions may enlarge small visuals. Original size only
+        shrinks oversized visuals. All modes fit within a fresh page's height.
+        Text blocks already have their desired width and use original sizing.
+        """
         reader = PdfReader(BytesIO(data))
         self._readers.append(reader)
         for source in reader.pages:
             width = float(source.mediabox.width)
             height = float(source.mediabox.height)
-            scale = min(1, self.content_width / width, self.content_height / height)
+            if resize == "original":
+                target_width = min(width, self.content_width)
+            elif resize == "full":
+                target_width = self.content_width
+            else:
+                target_width = self.content_width * float(resize)
+            scale = min(target_width / width, self.content_height / height)
             placed_height = height * scale
             if self._page is None or placed_height > self.remaining_height + 1e-6:
                 page = self.new_page()
@@ -99,7 +116,7 @@ class _PageComposer:
                 .translate(left, bottom)
             )
             page.merge_transformed_page(source, transform)
-            self._cursor = bottom - 12
+            self._cursor = bottom - space_after
 
     def save(self, path: str | Path) -> None:
         """Write the composed pages while preserving searchable vector content."""

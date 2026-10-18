@@ -71,6 +71,9 @@ report.save("experiment_report.pdf")
 
 Report content fills available page space in order, with automatic pagination.
 Use `report.add_page_break()` when you want an explicit fresh page.
+Tables and charts fill the printable width by default; pass `resize=0.5` for
+half width or `resize="original"` for native size. `add_text()` accepts font,
+size, color, alignment, and spacing options.
 
 Select `theme="default"`, `"light"`, or `"dark"` on tables and charts.
 Use `table.df`, `chart.fig`, and `chart.ax` for pandas/matplotlib customization.

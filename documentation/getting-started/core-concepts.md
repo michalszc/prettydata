@@ -66,6 +66,11 @@ Content flows top to bottom in insertion order. The report title is a heading on
 the first page. Text wraps into the remaining space and continues on later
 pages; tables and charts remain intact and move forward only when they do not
 fit. Visuals preserve aspect ratios, vector graphics, and searchable text.
+Tables and charts fill the printable width by default. Set `resize=0.5` for
+half width or `resize="original"` to retain native size where it fits. Very
+tall visuals are limited by page height. `add_text` accepts per-block fonts,
+colors, alignment, line spacing, and spacing after the block; these settings
+are used when wrapping and paginating text.
 
 All pages share the configured paper size and margins. A4 portrait is the
 default; Report figsize and margin configure the paper in inches. Use

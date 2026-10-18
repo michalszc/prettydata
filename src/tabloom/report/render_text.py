@@ -13,33 +13,33 @@ from tabloom.rendering.new_figure import _new_figure
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from tabloom.report.text_block import _TextBlock
     from tabloom.themes.theme import _Theme
 
 
 def _render_text(
-    lines: Sequence[str], width: float, font_size: float, weight: str, theme: _Theme
+    lines: Sequence[str], width: float, block: _TextBlock, theme: _Theme
 ) -> bytes:
     """Render wrapped lines at a width and line-box height measured in points.
 
-    Each line reserves 1.5 times the font size. The caller chooses a chunk that
-    fits the current report page. Only the temporary rendering figure is closed.
+    Line boxes reflect the block's font size and spacing. The caller chooses a
+    chunk that fits the current page. Only the temporary figure is closed.
     """
-    height = len(lines) * font_size * 1.5
-    fig, ax = _new_figure(theme, (width / 72, height / 72), font_size)
+    height = len(lines) * block.font_size * block.line_spacing
+    fig, ax = _new_figure(theme, (width / 72, height / 72), block.font_size)
     try:
         fig.set_layout_engine(None)
         ax.set_axis_off()
         fig.text(
-            0,
+            {"left": 0, "center": 0.5, "right": 1}[block.align],
             1,
             "\n".join(lines),
             va="top",
-            ha="left",
-            fontsize=font_size,
-            linespacing=1.5,
-            color=theme.foreground,
-            fontfamily="DejaVu Sans",
-            weight=weight,
+            ha=block.align,
+            multialignment=block.align,
+            fontproperties=block.font,
+            linespacing=block.line_spacing,
+            color=block.color or theme.foreground,
             usetex=False,
             parse_math=False,
         )

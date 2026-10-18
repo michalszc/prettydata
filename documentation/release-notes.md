@@ -34,6 +34,10 @@
   fallback warnings during notebook exports.
 - Cleaned up pyplot registration automatically after notebook display while
   preserving chart reuse, removing manual cleanup from the example notebook.
+- Exposed per-block report text fonts, size, weight, style, color, alignment,
+  line spacing, and spacing after text, with matching wrapping and pagination.
+- Made report tables and charts full width by default, with fractional-width
+  and original-size overrides that preserve vector output and aspect ratios.
 
 ## 0.0.0 — 2026-10-17
 

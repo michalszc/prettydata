@@ -53,3 +53,25 @@ def test_page_break_has_one_documented_return(reference_site: Path) -> None:
         "Leading, trailing, and consecutive breaks do not create empty pages." in method
     )
     assert "This report, allowing method chaining." in method
+
+
+def test_report_styling_parameters_are_documented(reference_site: Path) -> None:
+    """Expose new typography and width controls in the generated method reference."""
+    html = (reference_site / "reference" / "reports" / "index.html").read_text()
+    text_method = html.split('id="tabloom.report.Report.add_text"', 1)[1]
+    text_method = text_method.split('id="tabloom.report.Report.add_table"', 1)[0]
+    for name in (
+        "font_family",
+        "font_size",
+        "font_weight",
+        "font_style",
+        "color",
+        "align",
+        "line_spacing",
+        "space_after",
+    ):
+        assert f"<code>{name}</code>" in text_method
+    for name in ("add_table", "add_chart"):
+        method = html.split(f'id="tabloom.report.Report.{name}"', 1)[1]
+        method = method.split('<h4 id="', 1)[0]
+        assert "<code>resize</code>" in method

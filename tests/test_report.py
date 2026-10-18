@@ -67,8 +67,8 @@ def test_composition_order_and_reuse(theme: str, tmp_path: Path) -> None:
         path = tmp_path / name
         report.save(path)
         pages = [page.extract_text() for page in PdfReader(path).pages]
-        assert len(pages) == 1
-        text = pages[0]
+        assert len(pages) == 2
+        text = "\n".join(pages)
         labels = ["Cover", "First text", "Updated model", "Updated chart", "Last text"]
         positions = [text.index(label) for label in labels]
         assert positions == sorted(positions)

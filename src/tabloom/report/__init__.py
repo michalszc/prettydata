@@ -2,7 +2,8 @@
 
 The public ``Report`` class retains supplied visuals for reuse and manages
 only its own temporary figures. Import it from ``tabloom`` or
-``tabloom.report``. Constructor and composition methods are documented below."""
+``tabloom.report``. Text styling and visual width policies are configured per
+element. Constructor and composition methods are documented below."""
 
 from __future__ import annotations
 

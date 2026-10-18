@@ -11,7 +11,7 @@ behavior. For complete task-oriented examples, start with the [guides](../guides
 | Tabular data | [Tables](tables.md) | `Table`: construction, editing, loading, rendering, and export |
 | Visualization | [Charts](charts.md) | `Chart`: six factories, customization, display, and export |
 | PDF composition | [Reports](reports.md) | `Report`: ordered text, table, and chart pages |
-| Visual defaults | [Themes](themes.md) | `default`, `light`, and `dark`; supported style options |
+| Visual defaults | [Themes](themes.md) | `plain`, `blue`, `soft_blue`, and `dark_blue`; supported style options |
 
 ## Public imports
 

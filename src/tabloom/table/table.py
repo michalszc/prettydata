@@ -29,13 +29,14 @@ if TYPE_CHECKING:
 
 
 class Table:
-    """An editable pandas table with professional graphical defaults.
+    """An editable pandas table with plain black-and-white graphical defaults.
 
     Args:
         data: Column mapping, records, rows, DataFrame, or None.
         columns: Column names; required for positional rows.
         title: Optional title above the rendered table.
-        theme: One of ``default``, ``light``, or ``dark``.
+        theme: Plain black and white by default. Choose ``blue``, ``soft_blue``,
+            or ``dark_blue`` for colored headers and alternating row backgrounds.
         style: Overrides: header_background, header_color, row_colors,
             font_size, cell_alignment, and relative column_widths.
         figsize: Optional figure width and height in inches.
@@ -49,7 +50,7 @@ class Table:
         *,
         columns: Sequence[Hashable] | None = None,
         title: str | None = None,
-        theme: str = "default",
+        theme: str = "plain",
         style: Mapping[str, Any] | None = None,
         figsize: tuple[float, float] | None = None,
         copy: bool = True,
@@ -103,7 +104,7 @@ class Table:
         path: str | Path,
         *,
         title: str | None = None,
-        theme: str = "default",
+        theme: str = "plain",
         style: Mapping[str, Any] | None = None,
         **kwargs: Any,
     ) -> Table:
@@ -133,7 +134,7 @@ class Table:
         path: str | Path,
         *,
         title: str | None = None,
-        theme: str = "default",
+        theme: str = "plain",
         style: Mapping[str, Any] | None = None,
         **kwargs: Any,
     ) -> Table:
@@ -162,7 +163,7 @@ class Table:
         path: str | Path,
         *,
         title: str | None = None,
-        theme: str = "default",
+        theme: str = "plain",
         style: Mapping[str, Any] | None = None,
         **kwargs: Any,
     ) -> Table:

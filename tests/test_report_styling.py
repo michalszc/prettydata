@@ -123,7 +123,7 @@ def test_text_typography_and_alignment(
     path = tmp_path / "styled.pdf"
     before = mpl.rcParams.copy()
     figures = plt.get_fignums()
-    report = Report(theme="dark", figsize=(6, 5), margin=0.5)
+    report = Report(theme="dark_blue", figsize=(6, 5), margin=0.5)
     assert (
         report.add_text(
             "Styled text",

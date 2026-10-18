@@ -2,6 +2,10 @@
 
 ## 0.1.0 — Unreleased
 
+- Made plain black-and-white tables the default, retaining the original colored
+  appearance with `theme="blue"` and in the basic example notebook.
+- Named themes for their appearance: plain, blue, soft_blue, and dark_blue;
+  charts and reports default to blue, while tables default to plain.
 -  Added shared visual themes and scoped matplotlib rendering foundations in
   [PR #5](https://github.com/michalszc/tabloom/pull/5).
 - Added editable DataFrame-backed tables, data imports/exports, and themed

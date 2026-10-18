@@ -2,8 +2,11 @@
 
 ## Select themes and customize tables
 
-Use `default`, `light`, or `dark` on both tables and charts. No theme permanently
-changes matplotlib's global settings.
+Tables default to `plain`: black text and borders on white cells. Charts and
+reports keep the colored `blue` theme. Select `theme="blue"` on a table
+for the original blue header and alternating rows. All three classes support
+`plain`, `blue`, `soft_blue`, and `dark_blue`. No theme permanently changes global
+matplotlib settings, and table style overrides still work with any theme.
 
 ```python
 import matplotlib.pyplot as plt
@@ -11,7 +14,7 @@ from tabloom import Chart, Table
 
 table = Table(
     {"Model": ["A", "B"], "Score": [85, 92]},
-    title="Results", theme="dark",
+    title="Results", theme="dark_blue",
     style={
         "header_background": "#315c75",
         "header_color": "white",
@@ -21,7 +24,7 @@ table = Table(
         "column_widths": [2, 1],
     },
 )
-chart = Chart.bar(data=table, x="Model", y="Score", theme="dark")
+chart = Chart.bar(data=table, x="Model", y="Score", theme="dark_blue")
 table.save("dark-table.png")
 chart.save("dark-chart.png")
 

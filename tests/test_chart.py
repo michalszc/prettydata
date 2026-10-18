@@ -54,7 +54,7 @@ def test_dataframe_and_table_inputs(factory: Any, *, as_table: bool) -> None:
     assert_frame_equal(frame, original)
 
 
-@pytest.mark.parametrize("theme", ["default", "light", "dark"])
+@pytest.mark.parametrize("theme", ["blue", "soft_blue", "dark_blue"])
 @pytest.mark.parametrize("factory", FACTORIES)
 def test_themes_and_settings(factory: Any, theme: str) -> None:
     before = mpl.rcParams.copy()
@@ -78,7 +78,7 @@ def test_themes_and_settings(factory: Any, theme: str) -> None:
     assert chart.ax.get_ylabel() == "Y"
     assert chart.ax.xaxis.label.get_fontsize() == 12
     assert dict(before) == dict(mpl.rcParams)
-    if theme == "dark":
+    if theme == "dark_blue":
         assert chart.fig.get_facecolor() == mpl.colors.to_rgba("#18232e")
 
 

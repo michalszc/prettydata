@@ -48,7 +48,7 @@ class Report:
         self,
         title: str | None = None,
         *,
-        theme: str = "default",
+        theme: str = "blue",
         figsize: tuple[float, float] = (8.27, 11.69),
         margin: float = 0.6,
     ) -> None:

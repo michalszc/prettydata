@@ -6,9 +6,14 @@ to Tabloom-owned figures without permanently changing matplotlib settings.
 
 | Theme | Appearance |
 | --- | --- |
-| `default` | White background, dark blue headers, teal-led chart palette |
-| `light` | Pale background, soft headers, restrained blue-led palette |
-| `dark` | Dark background, light text, and high-contrast series colors |
+| `plain` | Black text and borders, white cells, no alternating backgrounds; table default |
+| `blue` | White background, dark blue headers, teal-led chart palette |
+| `soft_blue` | Pale background, soft headers, restrained blue-led palette |
+| `dark_blue` | Dark background, light text, and high-contrast series colors |
+
+Table constructors and file loaders use `plain` by default. Charts and reports
+continue to use `blue`. Selecting `theme="blue"` on a table preserves the
+original colored styling.
 
 Tables additionally accept a `style` mapping. Supported keys are
 `header_background`, `header_color`, `row_colors`, `font_size`, `cell_alignment`,

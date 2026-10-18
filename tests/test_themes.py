@@ -11,7 +11,7 @@ from tabloom.rendering.save_figure import _save_figure
 from tabloom.themes.get_theme import _get_theme
 
 
-@pytest.mark.parametrize("name", ["default", "light", "dark"])
+@pytest.mark.parametrize("name", ["plain", "blue", "soft_blue", "dark_blue"])
 def test_theme_and_figure(name: str, tmp_path: Path) -> None:
     before = mpl.rcParams.copy()
     theme = _get_theme(name)
@@ -27,19 +27,20 @@ def test_theme_and_figure(name: str, tmp_path: Path) -> None:
     assert dict(mpl.rcParams) == dict(before)
 
 
-def test_unknown_theme() -> None:
+@pytest.mark.parametrize("name", ["unknown", "default", "light", "dark"])
+def test_unknown_theme(name: str) -> None:
     with pytest.raises(ValueError, match="Unknown theme"):
-        _get_theme("unknown")
+        _get_theme(name)
 
 
 @pytest.mark.parametrize("size", [(0, 4), (4, -1), (float("nan"), 4)])
 def test_invalid_dimensions(size: tuple[float, float]) -> None:
     with pytest.raises(ValueError, match="positive"):
-        _new_figure(_get_theme("default"), size)
+        _new_figure(_get_theme("blue"), size)
 
 
 def test_invalid_figure_arguments(tmp_path: Path) -> None:
-    theme = _get_theme("default")
+    theme = _get_theme("blue")
     with pytest.raises(ValueError, match="width and height"):
         _new_figure(theme, (4,))
     with pytest.raises(ValueError, match="Font size"):

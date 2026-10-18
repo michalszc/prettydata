@@ -75,7 +75,9 @@ Tables and charts fill the printable width by default; pass `resize=0.5` for
 half width or `resize="original"` for native size. `add_text()` accepts font,
 size, color, alignment, and spacing options.
 
-Select `theme="default"`, `"light"`, or `"dark"` on tables and charts.
+Tables are plain black and white by default. Select `theme="blue"` for the
+original colored table style, or choose `"soft_blue"` or `"dark_blue"`. Charts keep their
+colored defaults; `theme="plain"` is also available for monochrome charts.
 Use `table.df`, `chart.fig`, and `chart.ax` for pandas/matplotlib customization.
 Table and chart `save()` support PNG, PDF, and SVG; `to_csv()`, `to_excel()`,
 and `to_json()` export table data without graphical styling.

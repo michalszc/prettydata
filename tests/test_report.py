@@ -15,7 +15,7 @@ from pypdf import PdfReader, PdfWriter
 from tabloom import Chart, Report, Table
 
 
-@pytest.mark.parametrize("theme", ["default", "light", "dark"])
+@pytest.mark.parametrize("theme", ["blue", "soft_blue", "dark_blue"])
 def test_report_fonts_do_not_require_weight_fallback(
     theme: str, tmp_path: Path, caplog: pytest.LogCaptureFixture
 ) -> None:
@@ -44,7 +44,7 @@ def test_empty_and_title_only(tmp_path: Path) -> None:
     assert reader.metadata.title == "Experiment Report"
 
 
-@pytest.mark.parametrize("theme", ["default", "light", "dark"])
+@pytest.mark.parametrize("theme", ["blue", "soft_blue", "dark_blue"])
 def test_composition_order_and_reuse(theme: str, tmp_path: Path) -> None:
     table = Table(
         {"Model": ["A", "B"], "Score": [85, 92]}, title="Table page", theme=theme

@@ -172,7 +172,7 @@ class Chart:
         title: str | None = None,
         xlabel: str | None = None,
         ylabel: str | None = None,
-        theme: str = "default",
+        theme: str = "blue",
         figsize: tuple[float, float] = (7, 4.5),
         font_size: float = 11,
         **kwargs: Any,

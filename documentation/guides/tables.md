@@ -14,6 +14,10 @@ empty = Table(columns=["Name", "Score"])
 ```
 
 Positional rows require explicit column names. Column names must be unique.
+Tables use black text, black borders, and white cells by default, with no colored
+headers or alternating backgrounds. To use the original colored appearance,
+pass `theme="blue"`; `"soft_blue"` and `"dark_blue"` are also available. File loaders
+use the same plain default and accept an explicit `theme` override.
 
 ## Edit incrementally
 

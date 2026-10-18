@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 def _get_theme(name: str) -> _Theme:
     """Return a named preset, raising ValueError for unsupported names."""
     if name not in _THEMES:
-        message = f"Unknown theme {name!r}; choose default, light, or dark."
+        message = (
+            f"Unknown theme {name!r}; choose plain, blue, soft_blue, or dark_blue."
+        )
         raise ValueError(message)
     return _THEMES[name]

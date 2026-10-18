@@ -15,6 +15,22 @@ from pypdf import PdfReader
 from tabloom import Table
 
 
+def test_default_table_is_plain_black_and_white() -> None:
+    """Default construction needs no styling arguments to produce a plain table."""
+    table = Table({"Name": ["Alice", "Bob"], "Score": [85, 92]}, title="Results")
+    before = mpl.rcParams.copy()
+    fig, ax = table.render()
+    assert fig.get_facecolor() == mpl.colors.to_rgba("white")
+    assert mpl.colors.to_rgba(ax.title.get_color()) == mpl.colors.to_rgba("black")
+    for cell in ax.tables[0].get_celld().values():
+        assert cell.get_facecolor() == mpl.colors.to_rgba("white")
+        assert cell.get_edgecolor() == mpl.colors.to_rgba("black")
+        assert mpl.colors.to_rgba(cell.get_text().get_color()) == mpl.colors.to_rgba(
+            "black"
+        )
+    assert dict(mpl.rcParams) == dict(before)
+
+
 @pytest.mark.parametrize(
     "data",
     [
@@ -130,7 +146,7 @@ def test_data_roundtrip(extension: str, tmp_path: Path) -> None:
     path = tmp_path / f"data.{extension}"
     if extension == "csv":
         table.to_csv(path, sep=";")
-        loaded = Table.from_csv(path, sep=";", title="Loaded", theme="dark")
+        loaded = Table.from_csv(path, sep=";", title="Loaded", theme="dark_blue")
         assert loaded.title == "Loaded"
     elif extension == "xlsx":
         table.to_excel(path, sheet_name="Results")
@@ -141,6 +157,11 @@ def test_data_roundtrip(extension: str, tmp_path: Path) -> None:
         table.to_json(path)
         loaded = Table.from_json(path)
     assert_frame_equal(loaded.df, table.df)
+    _, ax = loaded.render()
+    # Explicitly requested themes still win over the plain loading default.
+    if extension != "csv":
+        assert ax.tables[0][0, 0].get_facecolor() == mpl.colors.to_rgba("white")
+        assert ax.tables[0][1, 0].get_edgecolor() == mpl.colors.to_rgba("black")
     with pytest.raises(FileNotFoundError):
         Table.from_csv(tmp_path / "missing.csv")
 
@@ -158,7 +179,7 @@ def test_io_overrides(tmp_path: Path) -> None:
     )
 
 
-@pytest.mark.parametrize("theme", ["default", "light", "dark"])
+@pytest.mark.parametrize("theme", ["blue", "soft_blue", "dark_blue"])
 def test_rendering_and_style(theme: str) -> None:
     table = Table(
         {"Name": ["Alice\nSmith", "Bob"], "Score": [85, np.nan]},

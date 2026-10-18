@@ -1,11 +1,21 @@
-"""Default, light, and dark palettes; configuration only, without global state."""
+"""Plain, blue, soft blue, and dark blue palettes without global style changes."""
 
 from __future__ import annotations
 
 from tabloom.themes.theme import _Theme
 
 _THEMES = {
-    "default": _Theme(
+    "plain": _Theme(
+        "#ffffff",
+        "#000000",
+        "#000000",
+        "#000000",
+        "#ffffff",
+        "#000000",
+        ("#ffffff", "#ffffff"),
+        ("#000000", "#444444", "#777777", "#aaaaaa", "#333333", "#999999"),
+    ),
+    "blue": _Theme(
         "#ffffff",
         "#243447",
         "#637487",
@@ -15,7 +25,7 @@ _THEMES = {
         ("#ffffff", "#f1f5f8"),
         ("#287c8e", "#dc8853", "#698554", "#8875a9", "#bc6573", "#718da5"),
     ),
-    "light": _Theme(
+    "soft_blue": _Theme(
         "#fafbfd",
         "#293746",
         "#6c7988",
@@ -25,7 +35,7 @@ _THEMES = {
         ("#ffffff", "#f4f7fa"),
         ("#377eb8", "#d68942", "#56927a", "#9877b1", "#c96f7d", "#778899"),
     ),
-    "dark": _Theme(
+    "dark_blue": _Theme(
         "#18232e",
         "#e7edf3",
         "#b2bfcc",

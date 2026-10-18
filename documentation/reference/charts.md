@@ -1,7 +1,7 @@
 # Charts API
 
 Factory options shared by all chart types: `data`, `title`, `xlabel`, `ylabel`,
-`theme="default"`, `figsize=(7, 4.5)`, and `font_size=11`. Remaining keywords are
+`theme="blue"`, `figsize=(7, 4.5)`, and `font_size=11`. Remaining keywords are
 passed to matplotlib. See [chart examples](../guides/charts.md).
 
 ::: tabloom.chart

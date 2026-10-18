@@ -13,6 +13,7 @@ from pandas.api.types import is_list_like, is_numeric_dtype
 
 from tabloom.rendering.new_figure import _new_figure
 from tabloom.rendering.save_figure import _save_figure
+from tabloom.rendering.show_figure import _show_figure
 from tabloom.rendering.text_size import _text_size
 from tabloom.table.format_cell import _display
 from tabloom.table.style import _TableStyle
@@ -512,9 +513,13 @@ class Table:
         return fig, ax
 
     def show(self) -> None:
-        """Display a freshly rendered table using the active graphical backend."""
+        """Render current data and display the table directly.
+
+        In a notebook, the Figure is displayed inline without writing an image
+        file. Outside notebooks, display uses the active graphical backend.
+        """
         fig, _ = self.render()
-        fig.show()
+        _show_figure(fig)
 
     def save(self, path: str | Path, *, dpi: float = 200, **kwargs: Any) -> None:
         """Save the styled table as PNG, PDF, or SVG.

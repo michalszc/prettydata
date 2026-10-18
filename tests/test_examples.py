@@ -6,6 +6,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pytest
+from matplotlib.figure import Figure
 from pypdf import PdfReader
 
 from tabloom import Chart, Report, Table
@@ -25,6 +26,7 @@ def test_document_examples(
     document: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(Figure, "show", lambda fig: None)
     for example in re.findall(r"```python\n(.*?)```", document.read_text(), re.DOTALL):
         exec(compile(example, str(document), "exec"), {})
     for path in tmp_path.glob("*.pdf"):
@@ -37,6 +39,7 @@ def test_document_examples(
 
 def test_requested_workflow(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(Figure, "show", lambda fig: None)
     table = Table(columns=["Model", "Accuracy"])
     table.add_row(["Model A", 0.85])
     table.add_row(["Model B", 0.91])
@@ -60,7 +63,16 @@ def test_requested_workflow(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> 
 
 def test_notebook_code(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(Figure, "show", lambda fig: None)
     notebook = json.loads((ROOT / "notebooks" / "basic_usage.ipynb").read_text())
+    rich_outputs = [
+        output
+        for cell in notebook["cells"]
+        if cell["cell_type"] == "code"
+        for output in cell["outputs"]
+        if output["output_type"] == "display_data" and "image/png" in output["data"]
+    ]
+    assert len(rich_outputs) == 2
     namespace: dict[str, object] = {}
     for cell in notebook["cells"]:
         if cell["cell_type"] == "code":

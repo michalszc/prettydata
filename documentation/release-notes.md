@@ -21,6 +21,9 @@
 - Split API reference and workflow guides into separate table, chart, report,
   data, theme, and export areas with concise overview maps.
 
+- Made Table.show and Chart.show display figures directly in notebooks without
+  intermediate image files, and refreshed the executed example notebook.
+
 ## 0.0.0 — 2026-10-17
 
 - Established the minimal typed package, development tooling, smoke tests,

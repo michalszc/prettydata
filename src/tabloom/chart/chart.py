@@ -11,6 +11,7 @@ from tabloom.chart.plot import _plot
 from tabloom.chart.resolve import _resolve
 from tabloom.rendering.new_figure import _new_figure
 from tabloom.rendering.save_figure import _save_figure
+from tabloom.rendering.show_figure import _show_figure
 from tabloom.table import Table
 from tabloom.themes.get_theme import _get_theme
 
@@ -250,8 +251,13 @@ class Chart:
         return cls(fig, ax)
 
     def show(self) -> None:
-        """Display this figure using the active graphical backend."""
-        self.fig.show()
+        """Display this chart directly in a notebook or graphical backend.
+
+        Notebook output uses the existing Figure without saving an image file.
+        Only this chart is displayed, and its figure remains available for
+        customization, saving, and reuse in reports.
+        """
+        _show_figure(self.fig)
 
     def save(self, path: str | Path, *, dpi: float = 200, **kwargs: Any) -> None:
         """Save PNG, PDF, or SVG without closing the chart.

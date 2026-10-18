@@ -19,6 +19,7 @@ box = Chart.box([[1, 2, 3], [2, 3, 5]], tick_labels=["A", "B"])
 pie = Chart.pie([3, 2, 1], labels=["A", "B", "C"], autopct="%1.0f%%")
 
 line.ax.set_yscale("log")
+line.show()  # Inline in notebooks; no intermediate image file is needed.
 line.save("training.svg")
 ```
 

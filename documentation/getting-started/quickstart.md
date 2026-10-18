@@ -27,6 +27,7 @@ report.save("experiment_report.pdf")
 ```
 
 The report contains a cover, text, table, and chart page, in that order.
-Use `table.show()` or `chart.show()` in an environment with a graphical backend.
+Use `table.show()` or `chart.show()` to display figures directly in notebooks,
+or in an environment with a graphical backend.
 Creation and saving do not open windows. See the [guides](../guides/index.md)
 for data files, themes, and customization.

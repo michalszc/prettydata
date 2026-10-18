@@ -81,12 +81,30 @@ class Chart:
         return cls._create("bar", x, y, **kwargs)
 
     @classmethod
-    def scatter(cls, x: Any = None, y: Any = None, **kwargs: Any) -> Chart:
+    def scatter(  # noqa: PLR0913 - explicit high-level scatter controls
+        cls,
+        x: Any = None,
+        y: Any = None,
+        *,
+        hue: Any = None,
+        colorbar: bool | None = None,
+        colorbar_label: str | None = None,
+        trendline: bool = False,
+        trendline_kwargs: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> Chart:
         """Create scatter points from vectors or named data columns.
 
         Args:
             x: X values or category labels, or a column name when data is supplied.
             y: Y values, bar heights, or a column name; must match the x length.
+            hue: Numeric color values or a column name when data is supplied.
+                Adds a colorbar automatically. Cannot be combined with c or color.
+            colorbar: Show or hide the hue colorbar. None shows it when hue is set.
+            colorbar_label: Colorbar label; defaults to the hue column name.
+            trendline: Add a least-squares line through finite numeric x/y pairs.
+            trendline_kwargs: Matplotlib line options such as label, color,
+                linewidth, and linestyle. Requires trendline=True.
             **kwargs: Common factory options (data, title, xlabel, ylabel, theme,
                 figsize, font_size) and matplotlib plotting options. Use s for
                 point size and c for numeric color values.
@@ -99,7 +117,19 @@ class Chart:
             ValueError: Input lengths, dimensions, theme, or numeric values are invalid.
             KeyError: A requested data column does not exist.
         """
-        return cls._create("scatter", x, y, **kwargs)
+        if colorbar_label is None and colorbar is not False and isinstance(hue, str):
+            colorbar_label = hue
+        return cls._create(
+            "scatter",
+            x,
+            y,
+            hue=hue,
+            colorbar=colorbar,
+            colorbar_label=colorbar_label,
+            trendline=trendline,
+            trendline_kwargs=trendline_kwargs,
+            **kwargs,
+        )
 
     @classmethod
     def hist(cls, x: Any = None, **kwargs: Any) -> Chart:
@@ -187,6 +217,9 @@ class Chart:
                 message = "Chart data column names must be unique."
                 raise ValueError(message)
         x = _resolve(x, frame, "x")
+        if kind == "scatter" and kwargs.get("hue") is not None:
+            hue = kwargs["hue"]
+            kwargs["hue"] = _resolve(hue, frame, "hue")
         if kind in {"line", "bar", "scatter"}:
             y = _resolve(y, frame, "y")
             if len(x) != len(y):

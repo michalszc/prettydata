@@ -4,6 +4,8 @@
 
 - Added non-mutating head/tail table previews; show displays the first 10 rows
   by default, while render and exports continue to include complete data.
+- Added numeric scatter hue, automatic labeled colorbars, and optional fitted
+  association lines with matplotlib customization and no extra dependencies.
 - Made plain black-and-white tables the default, retaining the original colored
   appearance with `theme="blue"` and in the basic example notebook.
 - Named themes for their appearance: plain, blue, soft_blue, and dark_blue;

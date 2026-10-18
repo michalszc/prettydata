@@ -34,3 +34,34 @@ All factories accept `title`, `xlabel`, `ylabel`, `theme`, `figsize`, and
 colors; box uses matplotlib's `boxprops`, `medianprops`, and related options.
 An explicit `label` creates a legend where the plot supports one. Unsupported
 keywords raise an error.
+
+## Color scatter points and add an association line
+
+```python
+from tabloom import Chart, Table
+
+measurements = Table({
+    "Alcohol": [9.5, 10.5, 11.5, 12.5],
+    "Acidity": [0.7, 0.6, 0.5, 0.4],
+    "Quality": [4, 5, 6, 7],
+})
+chart = Chart.scatter(
+    data=measurements, x="Alcohol", y="Acidity", hue="Quality",
+    colorbar_label="Quality score", trendline=True,
+    trendline_kwargs={"label": "Linear association", "color": "black"},
+    title="Measurements", xlabel="Alcohol", ylabel="Acidity",
+)
+chart.show()
+```
+
+Numeric `hue` accepts a column name, list, array, or Series and adds a colorbar
+automatically. Its default label is the column name; use `colorbar_label` to
+change it or `colorbar=False` to hide the bar. Hue needs one finite numeric value
+per point and cannot be combined with matplotlib's `c` or `color` options.
+Without `hue`, existing matplotlib scatter options continue to work.
+
+`trendline=True` fits a least-squares line to finite numeric x/y pairs. At least
+two finite pairs with distinct x values are required. The line is descriptive;
+it does not establish causation or supply a confidence interval. Customize the
+line with matplotlib options in `trendline_kwargs`; Figure/Axes access remains
+available for more advanced additions.

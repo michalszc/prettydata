@@ -6,6 +6,12 @@
   appearance with `theme="blue"` and in the basic example notebook.
 - Named themes for their appearance: plain, blue, soft_blue, and dark_blue;
   charts and reports default to blue, while tables default to plain.
+- Added an executed wine-quality notebook with a cached UCI CSV download,
+  1,599 observations, plain wide tables, three advanced chart examples, and a
+  complete report appendix assembled from explicit 32-row table sections.
+- Ignored notebook output directories and common image/data exports, including
+  PDF, PNG, SVG, CSV, Excel, JSON, and columnar formats, without ignoring source
+  notebooks or assets elsewhere in the project.
 -  Added shared visual themes and scoped matplotlib rendering foundations in
   [PR #5](https://github.com/michalszc/tabloom/pull/5).
 - Added editable DataFrame-backed tables, data imports/exports, and themed

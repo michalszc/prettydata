@@ -95,6 +95,7 @@ and `to_json()` export table data without graphical styling.
 | Example | Description | Notebook | Colab |
 |---------|-------------|----------|-------|
 | **Basic usage** | Create tables, charts, and a PDF report | [basic_usage.ipynb](notebooks/basic_usage.ipynb) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/michalszc/tabloom/blob/master/notebooks/basic_usage.ipynb) |
+| **Wine quality report** | Download 1,599 rows, build plain tables, explore three chart types, and export all data in a report | [wine_quality_report.ipynb](notebooks/wine_quality_report.ipynb) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/michalszc/tabloom/blob/master/notebooks/wine_quality_report.ipynb) |
 
 ## Development
 

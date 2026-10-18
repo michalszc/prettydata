@@ -211,6 +211,23 @@ docs
 
 # Notebooks
 notebooks/data/
+notebooks/outputs/
+notebooks/**/*.pdf
+notebooks/**/*.png
+notebooks/**/*.svg
+notebooks/**/*.csv
+notebooks/**/*.tsv
+notebooks/**/*.xls
+notebooks/**/*.xlsx
+notebooks/**/*.xlsm
+notebooks/**/*.xlsb
+notebooks/**/*.ods
+notebooks/**/*.json
+notebooks/**/*.jsonl
+notebooks/**/*.parquet
+notebooks/**/*.feather
+notebooks/**/*.pkl
+notebooks/**/*.pickle
 
 # uv
 # Ignored because uv is not the primary package manager used in this project

@@ -118,6 +118,9 @@ report.save("custom-report.pdf")
 Margins must leave a positive printable area. Text needs enough height for at
 least one line. Tables remain whole blocks; splitting a large table into rows
 across pages is outside v0.1.0.
+For a complete large-data workflow, see the [wine-quality notebook](../examples.md).
+It explicitly slices all 1,599 observations into 32-row tables, repeating column
+headers and adding page breaks to produce a readable landscape data appendix.
 
 ## Request a page break
 

@@ -15,6 +15,12 @@
 - Excel support targets `.xlsx`; reports place each visual on a separate page.
   Complex document layout and table pagination remain outside this release.
 
+- Organized implementation into focused feature packages, with at most one
+  top-level class or function per module and documented internal responsibilities.
+
+- Split API reference and workflow guides into separate table, chart, report,
+  data, theme, and export areas with concise overview maps.
+
 ## 0.0.0 — 2026-10-17
 
 - Established the minimal typed package, development tooling, smoke tests,

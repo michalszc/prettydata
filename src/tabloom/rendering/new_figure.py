@@ -1,25 +1,19 @@
-"""Figure creation and output helpers; never change global plot styles."""
+"""Create an owned, themed matplotlib figure with scoped configuration."""
 
 from __future__ import annotations
 
-from math import isfinite
-from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 from matplotlib import rc_context
+
+from tabloom.validation.positive import _positive
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
-    from tabloom._themes import _Theme
-
-
-def _positive(value: float, name: str) -> None:
-    if not isfinite(value) or value <= 0:
-        message = f"{name} must be a finite positive number."
-        raise ValueError(message)
+    from tabloom.themes.theme import _Theme
 
 
 def _new_figure(
@@ -27,6 +21,7 @@ def _new_figure(
     figsize: tuple[float, ...],
     fontsize: float = 11,
 ) -> tuple[Figure, Axes]:
+    """Create Figure/Axes without displaying them or retaining global style changes."""
     if len(figsize) != 2:
         message = "figsize must contain width and height in inches."
         raise ValueError(message)
@@ -44,18 +39,3 @@ def _new_figure(
     ax.spines[["top", "right"]].set_visible(False)
     ax.set_axisbelow(True)
     return fig, ax
-
-
-def _save_figure(
-    fig: Figure,
-    path: str | Path,
-    *,
-    dpi: float = 200,
-    **kwargs: Any,
-) -> None:
-    if Path(path).suffix.lower() not in {".png", ".pdf", ".svg"}:
-        message = "Rendered output must use a .png, .pdf, or .svg extension."
-        raise ValueError(message)
-    _positive(dpi, "DPI")
-    options = {"bbox_inches": "tight", "pad_inches": 0.15, **kwargs}
-    fig.savefig(path, dpi=dpi, **options)

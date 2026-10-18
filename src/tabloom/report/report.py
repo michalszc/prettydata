@@ -1,48 +1,22 @@
-"""Ordered PDF composition using existing Table and Chart renderers."""
+"""Ordered PDF reports combining text and existing Table/Chart visuals."""
 
 from __future__ import annotations
 
 from pathlib import Path
-from textwrap import wrap
 from typing import TYPE_CHECKING, Any
 
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.backends.backend_pdf import PdfPages
-from matplotlib.font_manager import FontProperties
 
-from tabloom._rendering import _new_figure
-from tabloom._themes import _get_theme
 from tabloom.chart import Chart
+from tabloom.rendering.new_figure import _new_figure
+from tabloom.report.wrap_lines import _wrap_lines
 from tabloom.table import Table
+from tabloom.themes.get_theme import _get_theme
+from tabloom.validation.text import _check_text
 
 if TYPE_CHECKING:
     from matplotlib.figure import Figure
-
-
-def _check_text(value: Any) -> None:
-    if not isinstance(value, str):
-        message = "Text must be a string."
-        raise TypeError(message)
-    if not value.strip():
-        message = "Text must not be empty or whitespace only."
-        raise ValueError(message)
-
-
-def _wrap_lines(text: str, width: float, font_size: float, weight: str) -> list[str]:
-    """Conservatively wrap using the widest actual glyph in the text."""
-    renderer = RendererAgg(1, 1, 72)
-    font = FontProperties(family="DejaVu Sans", size=font_size, weight=weight)
-    glyph_width = max(
-        renderer.get_text_width_height_descent(char, font, ismath=False)[0]
-        for char in set(text)
-        if not char.isspace()
-    )
-    characters = max(1, int(width * 72 / max(1, glyph_width)))
-    lines: list[str] = []
-    for paragraph in text.expandtabs(4).split("\n"):
-        lines.extend(wrap(paragraph, width=characters, break_on_hyphens=False) or [""])
-    return lines
 
 
 class Report:

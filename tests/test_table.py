@@ -275,7 +275,7 @@ def test_show_and_failure_cleanup(
         message = "render failure"
         raise RuntimeError(message)
 
-    monkeypatch.setattr("tabloom.table.MplTable.add_cell", fail)
+    monkeypatch.setattr("tabloom.table.table.MplTable.add_cell", fail)
     with pytest.raises(RuntimeError, match="render failure"):
         table.render()
     assert plt.get_fignums() == before

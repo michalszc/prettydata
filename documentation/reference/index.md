@@ -1,61 +1,25 @@
 # API Reference
 
-The primary public API consists of `Table`, `Chart`, and `Report`, imported from
-`tabloom`. Version and author metadata remain available as `__version__` and
-`__author__`.
+This reference is generated from Tabloom's public docstrings by mkdocstrings.
+Each area has its own page for constructors, methods, options, and output
+behavior. For complete task-oriented examples, start with the [guides](../guides/index.md).
 
-## Table
+## Reference map
 
-::: tabloom.Table
-    options:
-      show_root_heading: false
-      merge_init_into_class: true
-      members:
-        - from_dataframe
-        - from_csv
-        - from_excel
-        - from_json
-        - add_row
-        - add_rows
-        - add_column
-        - update_row
-        - remove_row
-        - rename_column
-        - to_dataframe
-        - to_csv
-        - to_excel
-        - to_json
-        - render
-        - show
-        - save
+| Area | Page | Main public API |
+| --- | --- | --- |
+| Tabular data | [Tables](tables.md) | `Table`: construction, editing, loading, rendering, and export |
+| Visualization | [Charts](charts.md) | `Chart`: six factories, customization, display, and export |
+| PDF composition | [Reports](reports.md) | `Report`: ordered text, table, and chart pages |
+| Visual defaults | [Themes](themes.md) | `default`, `light`, and `dark`; supported style options |
 
-## Chart
+## Public imports
 
-Factory options shared by all chart types: `data`, `title`, `xlabel`, `ylabel`,
-`theme="default"`, `figsize=(7, 4.5)`, and `font_size=11`. Remaining keywords are
-passed to matplotlib. See [chart examples](../guides/index.md#create-charts).
+```python
+from tabloom import Chart, Report, Table
+```
 
-::: tabloom.Chart
-    options:
-      show_root_heading: false
-      members:
-        - line
-        - bar
-        - scatter
-        - hist
-        - box
-        - pie
-        - show
-        - save
-
-## Report
-
-::: tabloom.Report
-    options:
-      show_root_heading: false
-      merge_init_into_class: true
-      members:
-        - add_text
-        - add_table
-        - add_chart
-        - save
+Applications should use the package root or the documented `tabloom.table`,
+`tabloom.chart`, and `tabloom.report` packages. Private helper modules are
+implementation details. Version and author metadata are available through
+`tabloom.__version__` and `tabloom.__author__`.

@@ -1,22 +1,23 @@
-"""DataFrame-backed tables with convenient editing and graphical output."""
+"""DataFrame-backed table creation, editing, rendering, and export."""
 
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Literal, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from matplotlib.backends.backend_agg import RendererAgg
-from matplotlib.colors import to_rgba
-from matplotlib.font_manager import FontProperties
 from matplotlib.table import Table as MplTable
 from matplotlib.transforms import Bbox
 from pandas.api.types import is_list_like, is_numeric_dtype
 
-from tabloom._rendering import _new_figure, _positive, _save_figure
-from tabloom._themes import _get_theme
+from tabloom.rendering.new_figure import _new_figure
+from tabloom.rendering.save_figure import _save_figure
+from tabloom.rendering.text_size import _text_size
+from tabloom.table.format_cell import _display
+from tabloom.table.style import _TableStyle
+from tabloom.themes.get_theme import _get_theme
+from tabloom.validation.dataframe import _dataframe
 
 if TYPE_CHECKING:
     from collections.abc import Hashable, Iterable, Sequence
@@ -24,61 +25,6 @@ if TYPE_CHECKING:
 
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
-
-
-@dataclass(frozen=True)
-class _TableStyle:
-    header_background: str | None = None
-    header_color: str | None = None
-    row_colors: Sequence[str] | None = None
-    font_size: float = 11
-    cell_alignment: Literal["auto", "left", "center", "right"] = "auto"
-    column_widths: Sequence[float] | None = None
-
-    def __post_init__(self) -> None:
-        _positive(self.font_size, "Font size")
-        if self.cell_alignment not in {"auto", "left", "center", "right"}:
-            message = "cell_alignment must be auto, left, center, or right."
-            raise ValueError(message)
-        if self.row_colors is not None and len(self.row_colors) != 2:
-            message = "row_colors must contain two alternating colors."
-            raise ValueError(message)
-        colors = [self.header_background, self.header_color]
-        colors.extend(self.row_colors or ())
-        for color in colors:
-            if color is not None:
-                to_rgba(color)
-        for width in self.column_widths or ():
-            _positive(width, "Column widths")
-
-
-def _text_size(
-    text: str, font_size: float, weight: str = "normal"
-) -> tuple[float, float]:
-    """Measure plain multiline text in inches using matplotlib's own renderer."""
-    renderer = RendererAgg(1, 1, 72)
-    font = FontProperties(family="DejaVu Sans", size=font_size, weight=weight)
-    lines = text.split("\n")
-    width = max(
-        renderer.get_text_width_height_descent(line, font, ismath=False)[0]
-        for line in lines
-    )
-    return (width + 12) / (0.84 * 72), (len(lines) * font_size * 1.4 + 14) / 72
-
-
-def _display(value: Any) -> str:
-    if pd.api.types.is_scalar(value) and pd.isna(value):
-        return ""
-    return str(value)
-
-
-def _dataframe(value: Any) -> pd.DataFrame:
-    if not isinstance(value, pd.DataFrame):
-        message = (
-            "Expected a single pandas DataFrame; select one sheet for Excel input."
-        )
-        raise TypeError(message)
-    return value
 
 
 class Table:
@@ -134,7 +80,20 @@ class Table:
 
     @classmethod
     def from_dataframe(cls, df: pd.DataFrame, **kwargs: Any) -> Table:
-        """Wrap a DataFrame; pass copy=False to share its data."""
+        """Construct a table from a pandas DataFrame.
+
+        Args:
+            df: Source DataFrame.
+            **kwargs: Table constructor options. Data is copied by default;
+                copy=False shares the exact DataFrame until an editing method
+                replaces it.
+
+        Returns:
+            A new table with the requested visual settings.
+
+        Raises:
+            TypeError: The input is not a single DataFrame.
+        """
         return cls(_dataframe(df), **kwargs)
 
     @classmethod
@@ -147,7 +106,18 @@ class Table:
         style: Mapping[str, Any] | None = None,
         **kwargs: Any,
     ) -> Table:
-        """Read CSV data, forwarding extra options to pandas.read_csv."""
+        """Read a CSV file using pandas.
+
+        Args:
+            path: Path to the input CSV file.
+            title: Optional title for graphical output.
+            theme: Name of the visual theme.
+            style: Table-specific visual overrides.
+            **kwargs: Options forwarded to pandas.read_csv, such as sep or index_col.
+
+        Returns:
+            A new table containing the loaded data.
+        """
         return cls(
             pd.read_csv(path, **kwargs),
             title=title,
@@ -166,7 +136,22 @@ class Table:
         style: Mapping[str, Any] | None = None,
         **kwargs: Any,
     ) -> Table:
-        """Read one Excel sheet, forwarding options to pandas.read_excel."""
+        """Read one Excel sheet using pandas and openpyxl.
+
+        Args:
+            path: Path to an Excel workbook, normally an .xlsx file.
+            title: Optional title for graphical output.
+            theme: Name of the visual theme.
+            style: Table-specific visual overrides.
+            **kwargs: Options forwarded to pandas.read_excel, including a single
+                sheet_name. The default engine is openpyxl.
+
+        Returns:
+            A new table containing one sheet.
+
+        Raises:
+            TypeError: The options request multiple sheets instead of one DataFrame.
+        """
         frame = pd.read_excel(path, **{"engine": "openpyxl", **kwargs})
         return cls(_dataframe(frame), title=title, theme=theme, style=style, copy=False)
 
@@ -180,7 +165,18 @@ class Table:
         style: Mapping[str, Any] | None = None,
         **kwargs: Any,
     ) -> Table:
-        """Read JSON data, forwarding options to pandas.read_json."""
+        """Read a JSON file using pandas.
+
+        Args:
+            path: Path to the JSON data file.
+            title: Optional title for graphical output.
+            theme: Name of the visual theme.
+            style: Table-specific visual overrides.
+            **kwargs: Options forwarded to pandas.read_json, such as orient or lines.
+
+        Returns:
+            A new table containing the loaded data.
+        """
         return cls(
             pd.read_json(path, **kwargs),
             title=title,
@@ -210,11 +206,36 @@ class Table:
         return dict(zip(self.df.columns, values, strict=True))
 
     def add_row(self, row: Any) -> Table:
-        """Append a mapping or positional row and return this table."""
+        """Append one mapping or positional row.
+
+        Args:
+            row: A mapping from column names to values, or values in column order.
+                Missing mapping keys receive missing values. Unknown keys are rejected.
+
+        Returns:
+            This table, allowing method chaining.
+
+        Raises:
+            TypeError: The row is not a mapping or sequence.
+            ValueError: Columns are missing, unknown, or have the wrong value count.
+        """
         return self.add_rows([row])
 
     def add_rows(self, rows: Iterable[Any]) -> Table:
-        """Append rows atomically, inferring columns from mappings if needed."""
+        """Append multiple rows without partially applying invalid input.
+
+        Args:
+            rows: An iterable of row mappings or positional sequences. An entirely
+                empty table infers columns from mappings; positional rows require
+                existing columns. An empty iterable leaves the table unchanged.
+
+        Returns:
+            This table, allowing method chaining.
+
+        Raises:
+            TypeError: A row is not a mapping or sequence.
+            ValueError: A row has unknown columns or an incorrect value count.
+        """
         self._validate_columns()
         records = list(rows)
         if not records:
@@ -240,7 +261,18 @@ class Table:
         return self
 
     def add_column(self, name: Hashable, values: Iterable[Any]) -> Table:
-        """Add a column of values in row order; existing names are rejected."""
+        """Append a column whose values follow the current row order.
+
+        Args:
+            name: A new, unique column name.
+            values: One value per existing row. Series index labels are not aligned.
+
+        Returns:
+            This table, allowing method chaining.
+
+        Raises:
+            ValueError: The column already exists or its length differs from the table.
+        """
         self._validate_columns()
         if name in self.df.columns:
             message = f"Column {name!r} already exists."
@@ -264,7 +296,21 @@ class Table:
             raise IndexError(message)
 
     def update_row(self, position: int, row: Any) -> Table:
-        """Update a row by zero-based position; mappings may update some cells."""
+        """Update cells identified by a zero-based row position.
+
+        Args:
+            position: Nonnegative row position, independent of pandas index labels.
+            row: A partial mapping of cells to update, or a complete sequence in
+                column order. Unspecified mapping keys retain their previous values.
+
+        Returns:
+            This table. Failed assignments do not partially change the stored frame.
+
+        Raises:
+            TypeError: The position or row has an unsupported type.
+            IndexError: The position is negative or outside the current table.
+            ValueError: Row keys or sequence length do not match the schema.
+        """
         self._position(position)
         updates = self._row(row, partial=True)
         frame = self.df.copy()
@@ -274,13 +320,36 @@ class Table:
         return self
 
     def remove_row(self, position: int) -> Table:
-        """Remove a row by zero-based position, preserving other index labels."""
+        """Remove one row while preserving the remaining index labels.
+
+        Args:
+            position: Nonnegative, zero-based row position rather than an index label.
+
+        Returns:
+            This table, allowing method chaining.
+
+        Raises:
+            TypeError: The position is not an integer.
+            IndexError: The position is negative or outside the current table.
+        """
         self._position(position)
         self.df = self.df.iloc[[i for i in range(len(self.df)) if i != position]].copy()
         return self
 
     def rename_column(self, old: Hashable, new: Hashable) -> Table:
-        """Rename a column, rejecting missing names and name collisions."""
+        """Rename a column without overwriting an existing column.
+
+        Args:
+            old: Existing column name.
+            new: Replacement name. Reusing the same name is allowed.
+
+        Returns:
+            This table, allowing method chaining.
+
+        Raises:
+            KeyError: The old column does not exist.
+            ValueError: The replacement collides with another column.
+        """
         self._validate_columns()
         if old not in self.df.columns:
             raise KeyError(old)
@@ -291,23 +360,57 @@ class Table:
         return self
 
     def to_dataframe(self, *, copy: bool = True) -> pd.DataFrame:
-        """Return a copy of the data, or the underlying frame with copy=False."""
+        """Return table data without graphical styling.
+
+        Args:
+            copy: Return an independent DataFrame copy by default. If False, return
+                the same object as table.df.
+
+        Returns:
+            The copied or shared pandas DataFrame.
+        """
         return self.df.copy() if copy else self.df
 
     def to_csv(self, path: str | Path, **kwargs: Any) -> None:
-        """Export data, without styling; omit the index unless overridden."""
+        """Export table data as CSV without graphical styling.
+
+        Args:
+            path: Destination data filename.
+            **kwargs: Options forwarded to pandas DataFrame.to_csv.
+                The index is omitted unless index=True is supplied.
+        """
         self.df.to_csv(path, **{"index": False, **kwargs})
 
     def to_excel(self, path: str | Path, **kwargs: Any) -> None:
-        """Export data to Excel using pandas and openpyxl, without styling."""
+        """Export table data as EXCEL without graphical styling.
+
+        Args:
+            path: Destination data filename.
+            **kwargs: Options forwarded to pandas DataFrame.to_excel.
+                The index is omitted and openpyxl is the default engine.
+        """
         self.df.to_excel(path, **{"index": False, "engine": "openpyxl", **kwargs})
 
     def to_json(self, path: str | Path, **kwargs: Any) -> None:
-        """Export data as JSON records by default, without graphical styling."""
+        """Export table data as JSON without graphical styling.
+
+        Args:
+            path: Destination data filename.
+            **kwargs: Options forwarded to pandas DataFrame.to_json.
+                The default orientation is records; pass orient to override it.
+        """
         self.df.to_json(path, **{"orient": "records", **kwargs})
 
     def render(self) -> tuple[Figure, Axes]:
-        """Create a fresh Figure/Axes from current data; the caller owns it."""
+        """Create a fresh matplotlib rendering of the current data.
+
+        Returns:
+            A Figure/Axes pair owned by the caller. Call plt.close(fig) when it is
+            no longer needed. Direct changes to table.df are reflected immediately.
+
+        Raises:
+            ValueError: Column names, dimensions, or configured widths are invalid.
+        """
         self._validate_columns()
         style, theme = self._style, self._theme
         rows = [[str(col) for col in self.df.columns]]
@@ -414,7 +517,20 @@ class Table:
         fig.show()
 
     def save(self, path: str | Path, *, dpi: float = 200, **kwargs: Any) -> None:
-        """Save a rendered PNG, PDF, or SVG, rather than exporting table data."""
+        """Save the styled table as PNG, PDF, or SVG.
+
+        Args:
+            path: Destination filename, including .png, .pdf, or .svg extension.
+            dpi: Positive raster resolution in dots per inch; defaults to 200.
+            **kwargs: Additional matplotlib Figure.savefig options, such as
+                transparent or bbox_inches.
+
+        Raises:
+            ValueError: The extension or DPI is unsupported.
+
+        The temporary rendering is closed after export. Use to_csv, to_excel, or
+        to_json to export data rather than graphical styling.
+        """
         fig, _ = self.render()
         try:
             _save_figure(fig, path, dpi=dpi, **kwargs)

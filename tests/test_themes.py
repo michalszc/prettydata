@@ -6,8 +6,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pytest
 
-from tabloom._rendering import _new_figure, _save_figure
-from tabloom._themes import _get_theme
+from tabloom.rendering.new_figure import _new_figure
+from tabloom.rendering.save_figure import _save_figure
+from tabloom.themes.get_theme import _get_theme
 
 
 @pytest.mark.parametrize("name", ["default", "light", "dark"])

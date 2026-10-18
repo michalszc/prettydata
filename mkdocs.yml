@@ -58,8 +58,18 @@ nav:
       - Core Concepts: getting-started/core-concepts.md
   - Guides:
       - Overview: guides/index.md
+      - Tables: guides/tables.md
+      - Data Files: guides/data.md
+      - Charts: guides/charts.md
+      - Themes: guides/themes.md
+      - Visual Exports: guides/exports.md
+      - PDF Reports: guides/reports.md
   - API Reference:
       - Overview: reference/index.md
+      - Tables: reference/tables.md
+      - Charts: reference/charts.md
+      - Reports: reference/reports.md
+      - Themes: reference/themes.md
   - Examples: examples.md
   - Troubleshooting: troubleshooting.md
   - Release Notes: release-notes.md

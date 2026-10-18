@@ -1,19 +1,8 @@
-"""Small, immutable visual defaults shared by Tabloom objects."""
+"""Default, light, and dark palettes; configuration only, without global state."""
 
-from dataclasses import dataclass
+from __future__ import annotations
 
-
-@dataclass(frozen=True)
-class _Theme:
-    background: str
-    foreground: str
-    muted: str
-    grid: str
-    header_background: str
-    header_color: str
-    rows: tuple[str, str]
-    palette: tuple[str, ...]
-
+from tabloom.themes.theme import _Theme
 
 _THEMES = {
     "default": _Theme(
@@ -47,10 +36,3 @@ _THEMES = {
         ("#65bed0", "#efac79", "#9cc789", "#b8a0d5", "#e49ba7", "#a0bed7"),
     ),
 }
-
-
-def _get_theme(name: str) -> _Theme:
-    if name not in _THEMES:
-        message = f"Unknown theme {name!r}; choose default, light, or dark."
-        raise ValueError(message)
-    return _THEMES[name]

@@ -43,10 +43,14 @@ Chart factories create a Figure and Axes without forcing display. Access them as
 `chart.fig` and `chart.ax`. Charts plot the supplied data when created; subsequent
 DataFrame edits do not automatically redraw chart artists.
 
-Saving leaves a chart available for customization and reuse. When finished,
-close it explicitly with `matplotlib.pyplot.close(chart.fig)`. A Table's
-`render()` returns a fresh Figure/Axes pair owned by the caller; Table.save
-cleans up its own temporary figure.
+Saving leaves a chart available for customization and reuse. In notebooks,
+`chart.show()` and `table.show()` automatically release matplotlib's figure
+registration after inline display. The chart's Figure and Axes remain usable
+for customization, saving, repeated display, and reports; no manual cleanup
+cell is needed. In a graphical application, close the plot window when finished.
+A Table's `render()` returns a fresh Figure/Axes pair owned by the caller;
+close that figure with `matplotlib.pyplot.close(fig)` when finished.
+Table.save cleans up its own temporary figure.
 
 ## Reports reuse visuals
 

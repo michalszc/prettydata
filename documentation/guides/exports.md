@@ -15,4 +15,6 @@ for extension in ("png", "pdf", "svg"):
 Save methods accept matplotlib savefig options such as `transparent=True`.
 Output uses tight bounds by default. Parent directories must already exist.
 Saving never forces interactive display. `table.show()` and `chart.show()` display their figures directly in notebooks.
+Notebook display handles pyplot cleanup automatically while keeping chart objects
+available for further customization, exports, and reports.
 Outside notebooks, use an interactive backend when opening graphical windows.

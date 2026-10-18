@@ -77,5 +77,6 @@ def test_notebook_code(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     for cell in notebook["cells"]:
         if cell["cell_type"] == "code":
             source = "".join(cell["source"])
+            assert "plt.close" not in source
             exec(compile(source, "basic_usage.ipynb", "exec"), namespace)
     assert len(PdfReader("experiment_report.pdf").pages) == 1

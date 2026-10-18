@@ -32,6 +32,8 @@
   text continuation, and optional add_page_break boundaries.
 - Used the bundled DejaVu Sans bold weight for report headings to avoid font
   fallback warnings during notebook exports.
+- Cleaned up pyplot registration automatically after notebook display while
+  preserving chart reuse, removing manual cleanup from the example notebook.
 
 ## 0.0.0 — 2026-10-17
 

@@ -516,7 +516,8 @@ class Table:
         """Render current data and display the table directly.
 
         In a notebook, the Figure is displayed inline without writing an image
-        file. Outside notebooks, display uses the active graphical backend.
+        file and its pyplot registration is cleaned up automatically. Outside
+        notebooks, display uses the active graphical backend.
         """
         fig, _ = self.render()
         _show_figure(fig)

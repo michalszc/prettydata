@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import matplotlib.pyplot as plt
+
 if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
@@ -14,6 +16,8 @@ def _show_figure(fig: Figure) -> None:
     A running IPython kernel receives the Figure itself through its rich display
     protocol. Outside a notebook, use the figure's active graphical backend.
     IPython is optional and is never needed for saving or report generation.
+    Notebook display releases pyplot's registration without clearing the figure,
+    so its owner can still customize, save, or display it again.
     """
     try:
         # Notebook support is optional and loaded only when showing a figure.
@@ -24,6 +28,9 @@ def _show_figure(fig: Figure) -> None:
         return
     shell = get_ipython()
     if getattr(shell, "kernel", None) is not None:
-        display(fig)
+        try:
+            display(fig)
+        finally:
+            plt.close(fig)
     else:
         fig.show()

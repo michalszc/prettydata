@@ -254,6 +254,7 @@ class Chart:
         """Display this chart directly in a notebook or graphical backend.
 
         Notebook output uses the existing Figure without saving an image file.
+        Pyplot registration is cleaned up automatically after notebook display.
         Only this chart is displayed, and its figure remains available for
         customization, saving, and reuse in reports.
         """

@@ -57,5 +57,7 @@ Report saving never closes caller-owned charts or separately rendered tables.
 The report theme controls text and cover pages. Existing tables and charts retain
 their own theme and customizations; select the same theme on each object for a
 uniform report. Text paginates automatically. Each visual occupies a separate
-page at its own dimensions; complex page layout and table pagination are outside
-v0.1.0.
+page fitted to the same paper size and margins. Aspect ratios, vector graphics,
+and searchable text are preserved. A4 portrait is the default; Report figsize
+and margin configure the paper in inches. Complex page layout and table
+pagination are outside v0.1.0.

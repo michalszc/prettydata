@@ -6,8 +6,9 @@ Install Tabloom using Python 3.12 or newer:
 python -m pip install tabloom
 ```
 
-This installs pandas, matplotlib, and openpyxl. Excel `.xlsx` reading and writing
-work with the standard installation. The distribution and import names are both
+This installs pandas, matplotlib, openpyxl, and pypdf. Excel `.xlsx` reading and writing
+work with the standard installation. pypdf preserves vector content when fitting
+report pages to a consistent paper size. The distribution and import names are both
 `tabloom`.
 
 For optional Jupyter kernel and widget support:

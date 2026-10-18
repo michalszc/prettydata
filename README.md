@@ -32,7 +32,8 @@ Tabloom provides:
 pip install tabloom
 ```
 
-Python 3.12+ is required. pandas, matplotlib, and openpyxl are installed automatically.
+Python 3.12+ is required. pandas, matplotlib, openpyxl, and pypdf are installed
+automatically.
 
 For the notebook dependencies:
 

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
 from matplotlib.backends.backend_pdf import PdfPages
-from pypdf import PdfReader
+from pypdf import PdfReader, PdfWriter
 
 from tabloom import Chart, Report, Table
 
@@ -136,3 +136,63 @@ def test_zero_width_text_and_long_cover(tmp_path: Path) -> None:
     reader = PdfReader(path)
     assert len(reader.pages) >= 2
     assert "I" * 10 in reader.pages[0].extract_text()
+
+
+@pytest.mark.parametrize("figsize", [(8.27, 11.69), (6, 9)])
+def test_uniform_paper_and_vector_content(
+    figsize: tuple[float, float], tmp_path: Path
+) -> None:
+    table = Table({"Model": ["A", "B"], "Score": [85, 92]}, title="Small table")
+    chart = Chart.bar(["A", "B"], [85, 92], title="Large chart", figsize=(15, 10))
+    chart.fig.canvas.draw()
+    original_size = chart.fig.get_size_inches().copy()
+    original_position = chart.ax.get_position().bounds
+    original_canvas = chart.fig.canvas
+    path = tmp_path / "uniform.pdf"
+    report = Report("Cover", figsize=figsize, margin=0.5)
+    report.add_text("Text page").add_table(table).add_chart(chart)
+    report.save(path)
+    reader = PdfReader(path)
+    assert len(reader.pages) == 4
+    for page in reader.pages:
+        assert float(page.mediabox.width) == pytest.approx(figsize[0] * 72)
+        assert float(page.mediabox.height) == pytest.approx(figsize[1] * 72)
+        assert float(page.cropbox.width) == pytest.approx(figsize[0] * 72)
+        assert len(page.images) == 0  # Text, table, and chart remain vector output.
+    assert "Small table" in reader.pages[2].extract_text()
+    assert "Large chart" in reader.pages[3].extract_text()
+    assert chart.fig.get_size_inches().tolist() == original_size.tolist()
+    assert chart.ax.get_position().bounds == pytest.approx(original_position)
+    assert chart.fig.canvas is original_canvas
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"figsize": (0, 8)},
+        {"figsize": (6, -1)},
+        {"margin": -0.1},
+        {"margin": float("nan")},
+        {"margin": 5},
+    ],
+)
+def test_invalid_page_settings(kwargs: dict[str, Any]) -> None:
+    with pytest.raises(ValueError, match=r"positive|margin"):
+        Report(**kwargs)
+
+
+def test_final_pdf_failure_preserves_chart(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    chart = Chart.line([1, 2], [3, 4])
+    before = plt.get_fignums()
+
+    def fail(*args: Any, **kwargs: Any) -> None:
+        message = "Final PDF write failed"
+        raise OSError(message)
+
+    monkeypatch.setattr(PdfWriter, "write", fail)
+    with pytest.raises(OSError, match="Final PDF write failed"):
+        Report().add_chart(chart).save(tmp_path / "failure.pdf")
+    assert plt.get_fignums() == before
+    assert plt.fignum_exists(chart.fig.number)

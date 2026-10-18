@@ -24,6 +24,10 @@
 - Made Table.show and Chart.show display figures directly in notebooks without
   intermediate image files, and refreshed the executed example notebook.
 
+- Standardized PDF report paper size (A4 by default) with configurable dimensions
+  and margins, preserving vector visuals and the original chart layouts.
+- Promoted the existing pypdf dependency to runtime for vector page composition.
+
 ## 0.0.0 — 2026-10-17
 
 - Established the minimal typed package, development tooling, smoke tests,

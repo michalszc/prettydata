@@ -6,6 +6,8 @@ import pytest
 from mkdocs.commands.build import build
 from mkdocs.config import load_config
 
+from tests.contracts.public_api.manifest import PUBLIC_SIGNATURES, REFERENCE_CLASSES
+
 ROOT = Path(__file__).parents[3]
 
 
@@ -86,3 +88,18 @@ def test_scatter_controls_are_documented(reference_site: Path) -> None:
     method = method.split('id="tabloom.chart.Chart.hist"', 1)[0]
     for name in ("hue", "colorbar", "colorbar_label", "trendline", "trendline_kwargs"):
         assert f"<code>{name}</code>" in method
+
+
+@pytest.mark.parametrize("name", REFERENCE_CLASSES)
+def test_protected_endpoints_have_reference_anchors(
+    reference_site: Path, name: str
+) -> None:
+    """Every supported public method remains addressable in the generated API."""
+    module, area = REFERENCE_CLASSES[name]
+    html = (reference_site / "reference" / area / "index.html").read_text()
+    prefix = f"tabloom.{module}.{name}"
+    assert f'id="{prefix}"' in html
+    for endpoint in PUBLIC_SIGNATURES:
+        owner, _, member = endpoint.partition(".")
+        if owner == name and member:
+            assert f'id="{prefix}.{member}"' in html, endpoint

@@ -2,6 +2,11 @@
 
 ## 0.1.0 — 2026-10-18
 
+- Protected public imports, signatures, forwarding hooks, typing, reference
+  anchors, and import side effects with explicit compatibility contracts. Added
+  package-layout checks and focused shared-validator tests in
+  [PR #5](https://github.com/michalszc/tabloom/pull/5).
+
 - Organized feature tests to mirror the library packages and grouped documentation,
   notebook, public-workflow, and module-structure checks under contracts in
   [PR #5](https://github.com/michalszc/tabloom/pull/5).

@@ -65,6 +65,16 @@ examples, `notebooks/` validates saved notebooks and executes them offline, and
 `release/` covers version validation and automation. Shared headless-backend and
 figure-cleanup fixtures remain in `tests/conftest.py`.
 
+`tests/contracts/public_api/manifest.py` records the v0.1.0 import paths, method
+signatures, and API reference locations independently of the implementation.
+These contracts permit new optional parameters and exports while detecting
+removed methods, changed defaults, new required arguments, or moved positional
+parameters. Update the manifest deliberately when changing the supported API;
+do not regenerate it from the live implementation. Every protected method must
+also remain linked in the generated reference. Fresh-process import checks
+ensure notebook/development tools are optional and imports create no figures or
+output files. Shared input validators have focused tests in `tests/validation/`.
+
 ```bash
 make test-verbose
 make test TEST_PATH=tests/contracts/package/test_package.py

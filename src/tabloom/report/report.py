@@ -5,14 +5,14 @@ from __future__ import annotations
 from io import BytesIO
 from math import isfinite
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Literal
+from typing import Any, Literal
 
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
 from tabloom.chart import Chart
 from tabloom.report.page_composer import _PageComposer
 from tabloom.report.render_text import _render_text
+from tabloom.report.table_pages import _TablePages
 from tabloom.report.text_block import _TextBlock
 from tabloom.report.visual_block import _VisualBlock
 from tabloom.report.wrap_lines import _wrap_lines
@@ -20,9 +20,6 @@ from tabloom.table import Table
 from tabloom.themes.get_theme import _get_theme
 from tabloom.validation.positive import _positive
 from tabloom.validation.text import _check_text
-
-if TYPE_CHECKING:
-    from matplotlib.figure import Figure
 
 
 class Report:
@@ -36,8 +33,9 @@ class Report:
         margin: Printable margin in inches; defaults to 0.6 on every side.
 
     Content flows into the remaining page space in insertion order. Text wraps
-    and paginates; visual blocks remain intact and move to a new page only when
-    needed. Aspect ratios, vector graphics, and searchable text are preserved.
+    and paginates; long tables continue with repeated headers and complete rows.
+    Charts remain intact and move to a fresh page when needed. Vector graphics
+    and searchable text are preserved.
     All pages have the same paper dimensions. Objects are retained by reference;
     their current state is used when saving. No external LaTeX is required.
     Text typography is configurable per block. Visuals fill the printable width
@@ -120,33 +118,42 @@ class Report:
         visual: Any,
         expected: type[Table | Chart],
         resize: Literal["full", "original"] | float,
+        *,
+        paginate: bool = False,
     ) -> Report:
         if not isinstance(visual, expected):
             message = f"Expected a Tabloom {expected.__name__}."
             raise TypeError(message)
-        self._elements.append(_VisualBlock(visual, resize))
+        self._elements.append(_VisualBlock(visual, resize, paginate))
         return self
 
     def add_table(
-        self, table: Table, *, resize: Literal["full", "original"] | float = "full"
+        self,
+        table: Table,
+        *,
+        resize: Literal["full", "original"] | float = "full",
+        paginate: bool = True,
     ) -> Report:
         """Append a table to be rendered from its current data when saving.
 
         Args:
             table: A Table instance to place in the nearest available space.
-                The table stays intact and moves to a new page if needed.
+                Long tables continue across pages with repeated column headers.
             resize: Full printable width by default ("full"), a width fraction
                 in (0, 1], or "original" to keep native size where it fits.
-                Aspect ratio is preserved; page height may limit the width.
+                Paginated tables retain column proportions and avoid enlarging
+                fonts simply to fill a wider page.
+            paginate: Split long tables into complete rows automatically.
+                False fits the complete table as one block. No captions are added.
 
         Returns:
             This report, allowing method chaining.
 
         Raises:
-            TypeError: The input is not a Table or resize has an invalid type.
+            TypeError: The input, resize, or paginate has an invalid type.
             ValueError: The resize policy or width fraction is invalid.
         """
-        return self._add_visual(table, Table, resize)
+        return self._add_visual(table, Table, resize, paginate=paginate)
 
     def add_chart(
         self, chart: Chart, *, resize: Literal["full", "original"] | float = "full"
@@ -204,14 +211,6 @@ class Report:
             )
             offset += len(chunk)
 
-    def _write_table(self, pdf: PdfPages, table: Table) -> None:
-        fig: Figure
-        fig, _ = table.render()
-        try:
-            pdf.savefig(fig, bbox_inches="tight", pad_inches=0.15)
-        finally:
-            plt.close(fig)
-
     def _write_chart(self, pdf: PdfPages, chart: Chart) -> None:
         """Export the chart while restoring layout adjustments made by matplotlib."""
         positions = [
@@ -268,12 +267,16 @@ class Report:
                     composer.request_break()
                 elif isinstance(element, _TextBlock):
                     self._write_text(composer, element)
+                elif isinstance(element.visual, Table):
+                    _TablePages(
+                        element.visual,
+                        composer,
+                        element.resize,
+                        paginate=element.paginate,
+                    ).write()
                 else:
                     with BytesIO() as buffer:
                         with PdfPages(buffer) as pdf:
-                            if isinstance(element.visual, Table):
-                                self._write_table(pdf, element.visual)
-                            else:
-                                self._write_chart(pdf, element.visual)
+                            self._write_chart(pdf, element.visual)
                         composer.add_pdf(buffer.getvalue(), resize=element.resize)
             composer.save(path)

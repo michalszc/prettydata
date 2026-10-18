@@ -6,13 +6,16 @@
   by default, while render and exports continue to include complete data.
 - Added numeric scatter hue, automatic labeled colorbars, and optional fitted
   association lines with matplotlib customization and no extra dependencies.
+- Paginated long report tables automatically with repeated headers, stable
+  column proportions, complete rows, and no generated captions. Added
+  paginate=False for whole-table fitting and simplified the large-data notebook.
 - Made plain black-and-white tables the default, retaining the original colored
   appearance with `theme="blue"` and in the basic example notebook.
 - Named themes for their appearance: plain, blue, soft_blue, and dark_blue;
   charts and reports default to blue, while tables default to plain.
 - Added an executed wine-quality notebook with a cached UCI CSV download,
   1,599 observations, plain wide tables, three advanced chart examples, and a
-  complete report appendix assembled from explicit 32-row table sections.
+  complete report table that paginates automatically.
 - Ignored notebook output directories and common image/data exports, including
   PDF, PNG, SVG, CSV, Excel, JSON, and columnar formats, without ignoring source
   notebooks or assets elsewhere in the project.
@@ -26,8 +29,8 @@
   automatic pagination, and explicit page breaks without external LaTeX.
 - Added executable quick-start documentation, a complete API reference, and
   an executed example notebook.
-- Excel support targets `.xlsx`; report visuals remain intact blocks.
-  Complex document layout and table-row pagination remain outside this release.
+- Excel support targets `.xlsx`; charts and individual table rows remain intact.
+  Complex document layout and splitting a cell across pages remain outside this release.
 
 - Organized implementation into focused feature packages, with at most one
   top-level class or function per module and documented internal responsibilities.

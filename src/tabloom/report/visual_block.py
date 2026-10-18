@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, cast
 
 from tabloom.validation.positive import _positive
 
@@ -18,9 +18,13 @@ class _VisualBlock:
 
     visual: Table | Chart
     resize: Literal["full", "original"] | float = "full"
+    paginate: bool = False
 
     def __post_init__(self) -> None:
         """Validate width policies before modifying a report's element list."""
+        if not isinstance(cast("object", self.paginate), bool):
+            message = "paginate must be a boolean."
+            raise TypeError(message)
         if isinstance(self.resize, str):
             if self.resize not in {"full", "original"}:
                 message = "resize must be 'full', 'original', or a width fraction."

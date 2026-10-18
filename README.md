@@ -70,6 +70,8 @@ report.save("experiment_report.pdf")
 ```
 
 Report content fills available page space in order, with automatic pagination.
+Long tables continue across pages with repeated headers; use `paginate=False`
+on `add_table()` to fit a table as one block instead.
 Use `report.add_page_break()` when you want an explicit fresh page.
 Tables and charts fill the printable width by default; pass `resize=0.5` for
 half width or `resize="original"` for native size. `add_text()` accepts font,

@@ -77,6 +77,16 @@ class _PageComposer:
         if self._page is not None:
             self._break_requested = True
 
+    def target_width(
+        self, native_width: float, resize: Literal["full", "original"] | float
+    ) -> float:
+        """Resolve a validated width policy in points, independently of height."""
+        if resize == "original":
+            return min(native_width, self.content_width)
+        if resize == "full":
+            return self.content_width
+        return self.content_width * float(resize)
+
     def add_pdf(
         self,
         data: bytes,
@@ -95,12 +105,7 @@ class _PageComposer:
         for source in reader.pages:
             width = float(source.mediabox.width)
             height = float(source.mediabox.height)
-            if resize == "original":
-                target_width = min(width, self.content_width)
-            elif resize == "full":
-                target_width = self.content_width
-            else:
-                target_width = self.content_width * float(resize)
+            target_width = self.target_width(width, resize)
             scale = min(target_width / width, self.content_height / height)
             placed_height = height * scale
             if self._page is None or placed_height > self.remaining_height + 1e-6:

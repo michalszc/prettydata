@@ -82,23 +82,23 @@ def test_large_notebook_download_cache_and_complete_report(
     assert len(namespace["histogram"].ax.get_legend().texts) == 2
 
     reader = PdfReader(tmp_path / "outputs" / "wine_quality_report.pdf")
-    assert len(reader.pages) == 54
+    assert len(reader.pages) > 4
     for page in reader.pages:
         assert float(page.mediabox.width) == pytest.approx(11.69 * 72)
         assert float(page.mediabox.height) == pytest.approx(8.27 * 72)
     row_numbers: list[int] = []
-    for index, page in enumerate(reader.pages[4:]):
+    for page in reader.pages[4:]:
         assert not page.images
-        start = index * 32 + 1
-        stop = min(start + 31, 1599)
         text = page.extract_text(extraction_mode="layout")
-        assert f"rows {start}-{stop} of 1599" in text
+        assert "Data appendix" not in text
         assert "Chlorides" in text
         assert "Quality" in text
         row_numbers.extend(
             int(number) for number in re.findall(r"^\s*(\d+)\s+\d", text, re.MULTILINE)
         )
     assert row_numbers == list(range(1, 1600))
+    assert len(namespace["display_table"].df) == 1599
+    assert not any("ROWS_PER_TABLE" in source for source in sources)
     for name in ("scatter", "histogram", "box"):
         path = tmp_path / "outputs" / f"wine_quality_{name}.png"
         assert path.read_bytes().startswith(b"\x89PNG")

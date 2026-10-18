@@ -75,3 +75,14 @@ def test_report_styling_parameters_are_documented(reference_site: Path) -> None:
         method = html.split(f'id="tabloom.report.Report.{name}"', 1)[1]
         method = method.split('<h4 id="', 1)[0]
         assert "<code>resize</code>" in method
+        if name == "add_table":
+            assert "<code>paginate</code>" in method
+
+
+def test_scatter_controls_are_documented(reference_site: Path) -> None:
+    """Describe the convenience controls beside the actual factory signature."""
+    html = (reference_site / "reference" / "charts" / "index.html").read_text()
+    method = html.split('id="tabloom.chart.Chart.scatter"', 1)[1]
+    method = method.split('id="tabloom.chart.Chart.hist"', 1)[0]
+    for name in ("hue", "colorbar", "colorbar_label", "trendline", "trendline_kwargs"):
+        assert f"<code>{name}</code>" in method

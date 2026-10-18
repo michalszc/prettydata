@@ -18,11 +18,11 @@ report.save("report.pdf")
 ```
 
 The title is a heading on the first page. Text wraps and can continue across
-pages, including when it starts in the space below a table or chart. Tables and
-charts remain intact: if a visual does not fit the remaining space, it moves to
-the next page. Visuals fill the printable width by default, preserving aspect
-ratios. They are never squeezed into a small leftover area. Items are never
-reordered to fill earlier gaps. Elements are separated by 12 points by default.
+pages, including when it starts in the space below a table or chart. Long tables
+continue across pages with repeated column headers and complete rows. Charts
+remain intact: if a chart does not fit, it moves to the next page. Visuals fill
+the printable width by default. Items are never reordered to fill earlier gaps.
+Elements are separated by 12 points by default.
 
 Full-width visuals may need multiple pages. A title-only report is valid; a report
 with neither a title nor content raises `ValueError`. Output supports PDF only
@@ -90,11 +90,39 @@ report.add_table(table, resize="original")
 report.save("sized-report.pdf")
 ```
 
-Scaling preserves the complete visual, including fonts, titles, and labels, and
-does not modify the supplied object. Smaller visuals can be enlarged. Very tall
-visuals are limited by the printable page height, so their final width may be
-less than requested. Every visual remains a centered block in the content flow;
-a fractional width does not place multiple visuals side by side.
+Scaling preserves complete charts and fitted tables, including fonts, titles,
+and labels, and does not modify the supplied object. Smaller visuals can be
+enlarged. Very tall charts are limited by the printable page height. Paginated
+tables keep column proportions, expanding columns rather than enlarging fonts
+when the requested width is larger than their native size. Every visual remains
+a centered block; a fractional width does not create a side-by-side layout.
+
+## Paginate long tables automatically
+
+```python
+from tabloom import Report, Table
+
+table = Table({"Record": range(150), "Score": [80 + i % 20 for i in range(150)]})
+report = Report("All Results")
+report.add_text("The complete table follows; the library repeats its headers.")
+report.add_table(table)
+report.save("all-results.pdf")
+```
+
+`add_table` defaults to `paginate=True`. Tables that fit on a fresh page retain
+their existing layout. Longer tables use available space, repeat column headers
+and any explicitly supplied table title, and keep each data row intact. Column
+widths are measured across the entire table so they remain consistent between
+pages. The library adds no appendix captions, row-range descriptions, or row
+numbers. Those are optional content supplied by the caller.
+For paginated tables, the available page space determines section height;
+setting a Table figure height does not compress all rows onto one page.
+
+To fit the whole table into one block, use `add_table(table, paginate=False)`.
+You can still split DataFrames yourself and add separate tables or explicit
+page breaks. A single row too tall for a fresh page is fitted intact; splitting
+the contents of a cell or a table across columns is outside v0.1.0. Pagination
+affects reports; `Table.render()` and `Table.save()` create one complete visual.
 
 ## Choose paper size and margins
 
@@ -116,11 +144,10 @@ report.save("custom-report.pdf")
 ```
 
 Margins must leave a positive printable area. Text needs enough height for at
-least one line. Tables remain whole blocks; splitting a large table into rows
-across pages is outside v0.1.0.
+least one line.
 For a complete large-data workflow, see the [wine-quality notebook](../examples.md).
-It explicitly slices all 1,599 observations into 32-row tables, repeating column
-headers and adding page breaks to produce a readable landscape data appendix.
+It adds all 1,599 observations as one table and lets the library create the
+landscape table pages automatically.
 
 ## Request a page break
 

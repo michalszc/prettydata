@@ -64,8 +64,10 @@ for a uniform report.
 
 Content flows top to bottom in insertion order. The report title is a heading on
 the first page. Text wraps into the remaining space and continues on later
-pages; tables and charts remain intact and move forward only when they do not
-fit. Visuals preserve aspect ratios, vector graphics, and searchable text.
+pages. Long tables paginate with repeated headers and complete rows; charts
+remain intact and move forward when they do not fit. Vector graphics and
+searchable text are preserved. Set `paginate=False` on `add_table` to fit the
+whole table as one visual instead.
 Tables and charts fill the printable width by default. Set `resize=0.5` for
 half width or `resize="original"` to retain native size where it fits. Very
 tall visuals are limited by page height. `add_text` accepts per-block fonts,
@@ -75,4 +77,5 @@ are used when wrapping and paginating text.
 All pages share the configured paper size and margins. A4 portrait is the
 default; Report figsize and margin configure the paper in inches. Use
 `add_page_break()` for explicit boundaries, including a separate title page.
-Complex multicolumn layout and table-row pagination are outside v0.1.0.
+Complex multicolumn layout and splitting individual cells across pages are
+outside v0.1.0.

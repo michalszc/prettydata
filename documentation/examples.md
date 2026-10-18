@@ -15,9 +15,10 @@ The larger example downloads the red-wine CSV from the
 [UCI Wine Quality dataset](https://archive.ics.uci.edu/dataset/186/wine+quality)
 (Cortez et al., 2009; [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)).
 Internet access is needed for its first run; later runs reuse the local CSV.
-It includes every observation in a landscape PDF appendix, explicitly splitting
-the DataFrame into 32-row tables with repeated headers and row numbers. Report
-keeps each supplied table intact; it does not split a giant table automatically.
+It includes every observation in a landscape PDF, adding one complete table
+and letting Report paginate its rows with repeated headers. `show(head=8)`
+previews the same table without limiting the report. The scatter example uses
+`hue` and `trendline` to add a colorbar and association line directly.
 
 Run notebooks from `notebooks/` to keep downloaded CSVs in its ignored `data/`
 directory. The complete `outputs/` directory is ignored, covering any generated

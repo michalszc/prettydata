@@ -14,8 +14,7 @@ from pandas.api.types import is_list_like, is_numeric_dtype
 from tabloom.rendering.new_figure import _new_figure
 from tabloom.rendering.save_figure import _save_figure
 from tabloom.rendering.show_figure import _show_figure
-from tabloom.rendering.text_size import _text_size
-from tabloom.table.format_cell import _display
+from tabloom.table.layout import _TableLayout
 from tabloom.table.select_rows import _select_rows
 from tabloom.table.style import _TableStyle
 from tabloom.themes.get_theme import _get_theme
@@ -423,46 +422,45 @@ class Table:
         """
         self._validate_columns()
         frame = _select_rows(self.df, head, tail)
+        return self._render_layout(self._layout(frame))
+
+    def _layout(self, frame: pd.DataFrame | None = None) -> _TableLayout:
+        """Measure current data without creating a figure or storing another dataset."""
+        self._validate_columns()
+        return _TableLayout(
+            self.df if frame is None else frame, self._style, self.title, self.figsize
+        )
+
+    def _render_layout(
+        self,
+        layout: _TableLayout,
+        *,
+        start: int = 0,
+        stop: int | None = None,
+        figsize: tuple[float, float] | None = None,
+        exact: bool = False,
+    ) -> tuple[Figure, Axes]:
+        """Reuse measured columns when rendering an intact table or a row section."""
+        stop = len(layout.rows) - 1 if stop is None else stop
+        rows = [layout.rows[0], *layout.rows[start + 1 : stop + 1]]
+        row_heights = layout.page_heights if exact else layout.heights
+        heights = [row_heights[0], *row_heights[start + 1 : stop + 1]]
+        widths = layout.widths
         style, theme = self._style, self._theme
-        rows = [[str(col) for col in frame.columns]]
-        rows.extend(
-            [_display(value) for value in row]
-            for row in frame.itertuples(index=False, name=None)
-        )
-        widths = [
-            max(
-                _text_size(row[col], style.font_size, "bold" if i == 0 else "normal")[0]
-                for i, row in enumerate(rows)
-            )
-            for col in range(len(frame.columns))
-        ]
-        heights = [
-            max((_text_size(cell, style.font_size)[1] for cell in row), default=0.5)
-            for row in rows
-        ]
-        if style.column_widths is not None:
-            if len(style.column_widths) != len(widths):
-                message = "column_widths must match the number of columns."
-                raise ValueError(message)
-            total = sum(style.column_widths)
-            fractions = [value / total for value in style.column_widths]
-            required = max(
-                (
-                    width / fraction
-                    for width, fraction in zip(widths, fractions, strict=True)
-                ),
-                default=0,
-            )
-            widths = [fraction * required for fraction in fractions]
-        title_width = (
-            _text_size(self.title, style.font_size + 3)[0] if self.title else 0
-        )
-        size = self.figsize or (
-            max(3, sum(widths) + 0.5, title_width),
-            max(1.2, sum(heights) + (0.7 if self.title else 0.3)),
-        )
+        size = figsize or layout.size
         fig, ax = _new_figure(theme, size, style.font_size)
         try:
+            if exact:
+                fig.set_layout_engine(None)
+                margin = min(0.15, size[0] / 4)
+                ax.set_position(
+                    (
+                        margin / size[0],
+                        0.15 / size[1],
+                        (size[0] - 2 * margin) / size[0],
+                        sum(heights) / size[1],
+                    )
+                )
             ax.set_axis_off()
             if self.title:
                 ax.set_title(
@@ -485,13 +483,15 @@ class Table:
                     background = (
                         (style.header_background or theme.header_background)
                         if header
-                        else (style.row_colors or theme.rows)[(row_number - 1) % 2]
+                        else (style.row_colors or theme.rows)[
+                            (start + row_number - 1) % 2
+                        ]
                     )
                     alignment = style.cell_alignment
                     if alignment == "auto":
                         alignment = (
                             "right"
-                            if is_numeric_dtype(frame.dtypes.iloc[col_number])
+                            if is_numeric_dtype(self.df.dtypes.iloc[col_number])
                             else "left"
                         )
                     cell = artist.add_cell(

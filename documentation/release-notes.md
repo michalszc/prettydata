@@ -2,6 +2,10 @@
 
 ## 0.1.0 — 2026-10-18
 
+- Organized feature tests to mirror the library packages and grouped documentation,
+  notebook, public-workflow, and module-structure checks under contracts in
+  [PR #5](https://github.com/michalszc/tabloom/pull/5).
+
 - Added an executed Excel sales notebook using Microsoft's cached sample workbook,
   worksheet/column/date selection, pandas summaries, line and pie charts, and
   Excel/PNG/vector-PDF exports with offline integration coverage in

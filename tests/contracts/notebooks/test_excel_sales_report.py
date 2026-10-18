@@ -11,7 +11,7 @@ import pytest
 from matplotlib.figure import Figure
 from pypdf import PdfReader
 
-ROOT = Path(__file__).parents[1]
+ROOT = Path(__file__).parents[3]
 
 
 @pytest.fixture

@@ -50,8 +50,20 @@ failures fail the online check.
 Use `make lint-fix` and `make format` to apply fixes. Ruff and mypy cover source,
 tests, and Python maintenance scripts. Pytest uses strict discovery and markers,
 terminal coverage, and an HTML report in `htmlcov/`. The threshold is 97%.
-Feature tests run headlessly and cover data editing, visual exports, and PDF
-composition as well as the existing infrastructure contracts.
+Feature tests run headlessly and mirror the package directories under
+`src/tabloom/`: `tests/table/`, `tests/chart/` (including `plots/`),
+`tests/report/`, `tests/rendering/`, `tests/themes/`, and `tests/validation/`.
+Place new tests beside the corresponding source area, with a `test_` prefix on
+the module name, such as `tests/report/test_table_pages.py` for
+`src/tabloom/report/table_pages.py`. Public-object tests may exercise several
+helpers together; a separate test file for every private helper is not required.
+
+Cross-cutting compatibility and repository checks belong in `tests/contracts/`:
+`public_api/` protects imports and user workflows, `package/` checks metadata and
+module structure, `documentation/` checks generated references and executable
+examples, `notebooks/` validates saved notebooks and executes them offline, and
+`release/` covers version validation and automation. Shared headless-backend and
+figure-cleanup fixtures remain in `tests/conftest.py`.
 
 ```bash
 make test-verbose
@@ -79,7 +91,8 @@ The underlying check's output is saved in its `*_output.txt` file.
 ## Repository organization
 
 - `src/tabloom/`: importable package and PEP 561 typed marker.
-- `tests/contracts/`: package and repository infrastructure tests.
+- `tests/`: feature tests mirroring the library's package directories.
+- `tests/contracts/`: public API, package, documentation, notebook, and release contracts.
 - `documentation/`: MkDocs sources, API templates, and release notes.
 - `docs/`: generated site, ignored by Git.
 - `notebooks/`: example notebooks.

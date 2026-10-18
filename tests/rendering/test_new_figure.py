@@ -1,4 +1,4 @@
-"""Shared visual defaults and scoped rendering behavior."""
+"""Scoped figure styling, dimensions, and shared export validation."""
 
 from pathlib import Path
 
@@ -25,12 +25,6 @@ def test_theme_and_figure(name: str, tmp_path: Path) -> None:
         assert path.stat().st_size > 100
     assert plt.fignum_exists(fig.number)
     assert dict(mpl.rcParams) == dict(before)
-
-
-@pytest.mark.parametrize("name", ["unknown", "default", "light", "dark"])
-def test_unknown_theme(name: str) -> None:
-    with pytest.raises(ValueError, match="Unknown theme"):
-        _get_theme(name)
 
 
 @pytest.mark.parametrize("size", [(0, 4), (4, -1), (float("nan"), 4)])

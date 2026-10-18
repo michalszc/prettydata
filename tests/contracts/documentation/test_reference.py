@@ -6,7 +6,7 @@ import pytest
 from mkdocs.commands.build import build
 from mkdocs.config import load_config
 
-ROOT = Path(__file__).parents[1]
+ROOT = Path(__file__).parents[3]
 
 
 @pytest.fixture(scope="module")

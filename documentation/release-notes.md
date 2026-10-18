@@ -2,6 +2,8 @@
 
 ## 0.1.0 — Unreleased
 
+- Added non-mutating head/tail table previews; show displays the first 10 rows
+  by default, while render and exports continue to include complete data.
 - Made plain black-and-white tables the default, retaining the original colored
   appearance with `theme="blue"` and in the basic example notebook.
 - Named themes for their appearance: plain, blue, soft_blue, and dark_blue;

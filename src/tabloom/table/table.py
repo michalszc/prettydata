@@ -16,6 +16,7 @@ from tabloom.rendering.save_figure import _save_figure
 from tabloom.rendering.show_figure import _show_figure
 from tabloom.rendering.text_size import _text_size
 from tabloom.table.format_cell import _display
+from tabloom.table.select_rows import _select_rows
 from tabloom.table.style import _TableStyle
 from tabloom.themes.get_theme import _get_theme
 from tabloom.validation.dataframe import _dataframe
@@ -403,29 +404,37 @@ class Table:
         """
         self.df.to_json(path, **{"orient": "records", **kwargs})
 
-    def render(self) -> tuple[Figure, Axes]:
+    def render(
+        self, *, head: int | None = None, tail: int | None = None
+    ) -> tuple[Figure, Axes]:
         """Create a fresh matplotlib rendering of the current data.
+
+        Args:
+            head: Render only the first n rows. None leaves rows unrestricted.
+            tail: Render only the last n rows. Cannot be combined with head.
 
         Returns:
             A Figure/Axes pair owned by the caller. Call plt.close(fig) when it is
             no longer needed. Direct changes to table.df are reflected immediately.
 
         Raises:
-            ValueError: Column names, dimensions, or configured widths are invalid.
+            TypeError: A preview count is not an integer.
+            ValueError: Preview counts, column names, dimensions, or widths are invalid.
         """
         self._validate_columns()
+        frame = _select_rows(self.df, head, tail)
         style, theme = self._style, self._theme
-        rows = [[str(col) for col in self.df.columns]]
+        rows = [[str(col) for col in frame.columns]]
         rows.extend(
             [_display(value) for value in row]
-            for row in self.df.itertuples(index=False, name=None)
+            for row in frame.itertuples(index=False, name=None)
         )
         widths = [
             max(
                 _text_size(row[col], style.font_size, "bold" if i == 0 else "normal")[0]
                 for i, row in enumerate(rows)
             )
-            for col in range(len(self.df.columns))
+            for col in range(len(frame.columns))
         ]
         heights = [
             max((_text_size(cell, style.font_size)[1] for cell in row), default=0.5)
@@ -482,7 +491,7 @@ class Table:
                     if alignment == "auto":
                         alignment = (
                             "right"
-                            if is_numeric_dtype(self.df.dtypes.iloc[col_number])
+                            if is_numeric_dtype(frame.dtypes.iloc[col_number])
                             else "left"
                         )
                     cell = artist.add_cell(
@@ -513,14 +522,24 @@ class Table:
             raise
         return fig, ax
 
-    def show(self) -> None:
-        """Render current data and display the table directly.
+    def show(self, *, head: int | None = None, tail: int | None = None) -> None:
+        """Display a preview of the table without changing its data.
+
+        Args:
+            head: Show the first n rows. When neither option is supplied, show 10.
+            tail: Show the last n rows instead. Cannot be combined with head.
+
+        Raises:
+            TypeError: A preview count is not an integer.
+            ValueError: A preview count is negative or both options are supplied.
 
         In a notebook, the Figure is displayed inline without writing an image
         file and its pyplot registration is cleaned up automatically. Outside
         notebooks, display uses the active graphical backend.
         """
-        fig, _ = self.render()
+        if head is None and tail is None:
+            head = 10
+        fig, _ = self.render(head=head, tail=tail)
         _show_figure(fig)
 
     def save(self, path: str | Path, *, dpi: float = 200, **kwargs: Any) -> None:

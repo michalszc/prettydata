@@ -54,10 +54,16 @@ Reports retain references to supplied objects and preserve insertion order.
 Saving renders tables from current data and uses the current chart figures.
 Report saving never closes caller-owned charts or separately rendered tables.
 
-The report theme controls text and cover pages. Existing tables and charts retain
-their own theme and customizations; select the same theme on each object for a
-uniform report. Text paginates automatically. Each visual occupies a separate
-page fitted to the same paper size and margins. Aspect ratios, vector graphics,
-and searchable text are preserved. A4 portrait is the default; Report figsize
-and margin configure the paper in inches. Complex page layout and table
-pagination are outside v0.1.0.
+The report theme controls page backgrounds and text. Existing tables and charts
+retain their own themes and customizations; select the same theme on each object
+for a uniform report.
+
+Content flows top to bottom in insertion order. The report title is a heading on
+the first page. Text wraps into the remaining space and continues on later
+pages; tables and charts remain intact and move forward only when they do not
+fit. Visuals preserve aspect ratios, vector graphics, and searchable text.
+
+All pages share the configured paper size and margins. A4 portrait is the
+default; Report figsize and margin configure the paper in inches. Use
+`add_page_break()` for explicit boundaries, including a separate title page.
+Complex multicolumn layout and table-row pagination are outside v0.1.0.

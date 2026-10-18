@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
 from tabloom.chart import Chart
-from tabloom.rendering.new_figure import _new_figure
-from tabloom.report.fit_pages import _fit_pages
+from tabloom.report.page_composer import _PageComposer
+from tabloom.report.render_text import _render_text
 from tabloom.report.wrap_lines import _wrap_lines
 from tabloom.table import Table
 from tabloom.themes.get_theme import _get_theme
@@ -27,14 +27,15 @@ class Report:
     """Compose text, tables, and charts into an ordered multipage PDF.
 
     Args:
-        title: Optional cover-page title. A title alone is a valid report.
-        theme: Theme for text and cover pages. Existing visuals retain their
+        title: Optional heading on the first page. A title alone is a valid report.
+        theme: Theme for report pages and text. Existing visuals retain their
             own themes and any matplotlib customizations.
         figsize: Common paper width and height in inches. Defaults to A4 portrait.
         margin: Printable margin in inches; defaults to 0.6 on every side.
 
-    Text is wrapped and paginated. Each table or chart is fitted to one page
-    with its aspect ratio, vector graphics, and searchable text preserved.
+    Content flows into the remaining page space in insertion order. Text wraps
+    and paginates; visual blocks remain intact and move to a new page only when
+    needed. Aspect ratios, vector graphics, and searchable text are preserved.
     All pages have the same paper dimensions. Objects are retained by reference;
     their current state is used when saving. No external LaTeX is required.
     """
@@ -59,7 +60,7 @@ class Report:
         self.figsize = (width, height)
         self.margin = margin
         self.title = title
-        self._elements: list[str | Table | Chart] = []
+        self._elements: list[str | Table | Chart | None] = []
 
     def add_text(self, text: str) -> Report:
         """Append text to the report in insertion order.
@@ -90,7 +91,8 @@ class Report:
         """Append a table to be rendered from its current data when saving.
 
         Args:
-            table: A Table instance to fit onto a report page.
+            table: A Table instance to place in the nearest available space.
+                The table stays intact and moves to a new page if needed.
 
         Returns:
             This report, allowing method chaining.
@@ -115,36 +117,43 @@ class Report:
         """
         return self._add_visual(chart, Chart)
 
-    def _write_text(self, pdf: PdfPages, text: str, *, cover: bool = False) -> None:
-        width, height = self.figsize
-        font_size = 24 if cover else 12
-        top = min(0.75, 1 - self.margin / height) if cover else 1 - self.margin / height
-        weight = "semibold" if cover else "normal"
-        lines = _wrap_lines(text, width - 2 * self.margin, font_size, weight)
-        per_page = max(
-            1, int((top - self.margin / height) * height * 72 / (font_size * 1.5))
-        )
-        for start in range(0, len(lines), per_page):
-            fig, ax = _new_figure(self._theme, (width, height), font_size)
-            try:
-                ax.set_axis_off()
-                fig.text(
-                    self.margin / width,
-                    top,
-                    "\n".join(lines[start : start + per_page]),
-                    va="top",
-                    ha="left",
-                    fontsize=font_size,
-                    linespacing=1.5,
-                    color=self._theme.foreground,
-                    fontfamily="DejaVu Sans",
-                    weight=weight,
-                    usetex=False,
-                    parse_math=False,
+    def add_page_break(self) -> Report:
+        """Start a new page before the next content element.
+
+        Leading, trailing, and consecutive breaks do not create empty pages.
+        To use a separate title page, add a break immediately after constructing
+        the report.
+
+        Returns:
+            This report, allowing method chaining.
+        """
+        self._elements.append(None)
+        return self
+
+    def _write_text(
+        self, composer: _PageComposer, text: str, *, heading: bool = False
+    ) -> None:
+        """Wrap text and render only the lines that fit the current page."""
+        font_size = 24 if heading else 12
+        weight = "semibold" if heading else "normal"
+        line_height = font_size * 1.5
+        if line_height > composer.content_height:
+            message = "The printable page area is too small for report text."
+            raise ValueError(message)
+        lines = _wrap_lines(text, composer.content_width / 72, font_size, weight)
+        offset = 0
+        while offset < len(lines):
+            capacity = int((composer.remaining_height + 1e-6) / line_height)
+            if capacity < 1:
+                composer.new_page()
+                capacity = int((composer.remaining_height + 1e-6) / line_height)
+            chunk = lines[offset : offset + capacity]
+            composer.add_pdf(
+                _render_text(
+                    chunk, composer.content_width, font_size, weight, self._theme
                 )
-                pdf.savefig(fig)
-            finally:
-                plt.close(fig)
+            )
+            offset += len(chunk)
 
     def _write_table(self, pdf: PdfPages, table: Table) -> None:
         fig: Figure
@@ -174,7 +183,7 @@ class Report:
                 ax.set_in_layout(in_layout)
 
     def save(self, path: str | Path) -> None:
-        """Write a PDF with uniform page dimensions and preserved vector visuals.
+        """Write ordered content into the available space on uniform PDF pages.
 
         Args:
             path: Destination PDF filename; its parent directory must exist.
@@ -189,26 +198,30 @@ class Report:
         if Path(path).suffix.lower() != ".pdf":
             message = "Reports must be saved with a .pdf extension."
             raise ValueError(message)
-        if not self.title and not self._elements:
+        if not self.title and not any(
+            element is not None for element in self._elements
+        ):
             message = "Cannot save an empty report; add a title or content."
             raise ValueError(message)
-        with BytesIO() as buffer:
-            with PdfPages(
-                buffer, metadata={"Title": self.title or "Tabloom Report"}
-            ) as pdf:
-                if self.title:
-                    self._write_text(pdf, self.title, cover=True)
-                for element in self._elements:
-                    if isinstance(element, str):
-                        self._write_text(pdf, element)
-                    elif isinstance(element, Table):
-                        self._write_table(pdf, element)
-                    else:
-                        self._write_chart(pdf, element)
-            _fit_pages(
-                buffer,
-                path,
-                figsize=self.figsize,
-                margin=self.margin,
-                background=self._theme.background,
-            )
+        with _PageComposer(
+            self.figsize,
+            self.margin,
+            self._theme.background,
+            self.title or "Tabloom Report",
+        ) as composer:
+            if self.title:
+                self._write_text(composer, self.title, heading=True)
+            for element in self._elements:
+                if element is None:
+                    composer.request_break()
+                elif isinstance(element, str):
+                    self._write_text(composer, element)
+                else:
+                    with BytesIO() as buffer:
+                        with PdfPages(buffer) as pdf:
+                            if isinstance(element, Table):
+                                self._write_table(pdf, element)
+                            else:
+                                self._write_chart(pdf, element)
+                        composer.add_pdf(buffer.getvalue())
+            composer.save(path)

@@ -69,6 +69,9 @@ report.add_table(table).add_chart(chart)
 report.save("experiment_report.pdf")
 ```
 
+Report content fills available page space in order, with automatic pagination.
+Use `report.add_page_break()` when you want an explicit fresh page.
+
 Select `theme="default"`, `"light"`, or `"dark"` on tables and charts.
 Use `table.df`, `chart.fig`, and `chart.ax` for pandas/matplotlib customization.
 Table and chart `save()` support PNG, PDF, and SVG; `to_csv()`, `to_excel()`,

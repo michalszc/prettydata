@@ -1,6 +1,9 @@
 # Creating PDF Reports
 
-## Combine a PDF report
+## Fill available page space
+
+Add content in reading order. Tabloom places each item below the previous one,
+using the remaining space on the current page before starting another page.
 
 ```python
 from tabloom import Chart, Report, Table
@@ -10,23 +13,29 @@ chart = Chart.bar(data=table, x="Model", y="Score", title="Model Comparison")
 report = Report(title="Experiment Results")
 report.add_text("Model performance on the validation dataset.")
 report.add_table(table).add_chart(chart)
+report.add_text("Model B achieved the highest score.")
 report.save("report.pdf")
 ```
 
-An optional title produces a cover page. Text sections wrap and paginate; tables
-and charts each occupy one page. Insertion order is preserved. A title-only
-report is valid; saving a report with neither title nor content raises
-`ValueError`. Report output supports PDF only and needs no LaTeX installation.
+The title is a heading on the first page. Text wraps and can continue across
+pages, including when it starts in the space below a table or chart. Tables and
+charts remain intact: if a visual does not fit the remaining space, it moves to
+the next page. Visuals are reduced only when too large for a fresh page, rather
+than squeezed into a small leftover area. Items are never reordered to fill
+earlier gaps. Elements are separated by 12 points of spacing.
 
-## Consistent paper size
+The example above fits on one A4 page. A title-only report is valid; a report
+with neither a title nor content raises `ValueError`. Output supports PDF only
+and needs no LaTeX installation.
 
-All pages use A4 portrait by default, including pages containing small tables or
-large charts. Visuals are fitted within common margins, preserving aspect ratios
-and vector quality. Small visuals retain their native scale to avoid inflated
-fonts; oversized visuals are reduced to fit. They are centered horizontally and aligned to the top
-margin. Original chart dimensions, layouts, and customizations are retained.
+## Choose paper size and margins
 
-To select another paper size, supply dimensions and margins in inches:
+All pages use A4 portrait by default. Vector graphics, searchable text, and
+visual aspect ratios are preserved. Small visuals retain their native scale;
+large visuals are reduced to fit the printable area. The original chart
+figures, dimensions, layouts, and customizations are retained.
+
+Supply paper dimensions and margins in inches to choose another size:
 
 ```python
 from tabloom import Chart, Report
@@ -38,5 +47,23 @@ report.add_chart(chart)
 report.save("custom-report.pdf")
 ```
 
-The configured margins must leave a positive printable area. Very large tables
-are scaled to one page; automatic table pagination remains outside v0.1.0.
+Margins must leave a positive printable area. Text needs enough height for at
+least one line. Tables remain whole blocks; splitting a large table into rows
+across pages is outside v0.1.0.
+
+## Request a page break
+
+Use `add_page_break()` when the next element should start on a fresh page.
+For a separate cover page, insert a break after the report title:
+
+```python
+from tabloom import Report
+
+report = Report("Experiment Results")
+report.add_page_break()
+report.add_text("This section starts on the second page.")
+report.save("report-with-cover.pdf")
+```
+
+The method is chainable. Leading, trailing, and repeated breaks do not create
+empty pages.

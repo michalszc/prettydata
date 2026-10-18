@@ -1,5 +1,9 @@
 # Reports API
 
+Content fills the remaining page space in insertion order. Use `add_page_break()`
+for an explicit boundary. See the [report guide](../guides/reports.md) for
+automatic pagination, paper settings, and cover-page examples.
+
 ::: tabloom.report
     options:
       show_root_heading: true

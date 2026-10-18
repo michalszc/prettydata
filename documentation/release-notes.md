@@ -8,12 +8,12 @@
   PNG/PDF/SVG rendering.
 - Added line, bar, scatter, histogram, box, and pie charts with shared themes,
   pandas/Table inputs, matplotlib customization, and graphical exports.
-- Added ordered PDF reports with cover pages, wrapped/paginated text, and
-  reusable table/chart pages without external LaTeX.
+- Added ordered PDF reports with flowing text, reusable tables/charts,
+  automatic pagination, and explicit page breaks without external LaTeX.
 - Added executable quick-start documentation, a complete API reference, and
   an executed example notebook.
-- Excel support targets `.xlsx`; reports place each visual on a separate page.
-  Complex document layout and table pagination remain outside this release.
+- Excel support targets `.xlsx`; report visuals remain intact blocks.
+  Complex document layout and table-row pagination remain outside this release.
 
 - Organized implementation into focused feature packages, with at most one
   top-level class or function per module and documented internal responsibilities.
@@ -27,6 +27,9 @@
 - Standardized PDF report paper size (A4 by default) with configurable dimensions
   and margins, preserving vector visuals and the original chart layouts.
 - Promoted the existing pypdf dependency to runtime for vector page composition.
+
+- Made report content fill remaining page space in order, with inline titles,
+  text continuation, and optional add_page_break boundaries.
 
 ## 0.0.0 — 2026-10-17
 

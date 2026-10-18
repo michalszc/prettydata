@@ -49,12 +49,11 @@ def test_composition_order_and_reuse(theme: str, tmp_path: Path) -> None:
         path = tmp_path / name
         report.save(path)
         pages = [page.extract_text() for page in PdfReader(path).pages]
-        assert len(pages) == 5
-        assert "Cover" in pages[0]
-        assert "First text" in pages[1]
-        assert "Updated model" in pages[2]
-        assert "Updated chart" in pages[3]
-        assert "Last text" in pages[4]
+        assert len(pages) == 1
+        text = pages[0]
+        labels = ["Cover", "First text", "Updated model", "Updated chart", "Last text"]
+        positions = [text.index(label) for label in labels]
+        assert positions == sorted(positions)
         assert plt.get_fignums() == figures
         assert chart.fig.canvas is canvas
     assert dict(before) == dict(mpl.rcParams)
@@ -130,9 +129,9 @@ def test_failure_cleanup(
     assert plt.get_fignums() == before
 
 
-def test_zero_width_text_and_long_cover(tmp_path: Path) -> None:
+def test_zero_width_text_and_long_title(tmp_path: Path) -> None:
     path = tmp_path / "special.pdf"
-    Report(title="I" * 600).add_text("\u200b").save(path)
+    Report(title="I" * 6000).add_text("\u200b").save(path)
     reader = PdfReader(path)
     assert len(reader.pages) >= 2
     assert "I" * 10 in reader.pages[0].extract_text()
@@ -150,17 +149,17 @@ def test_uniform_paper_and_vector_content(
     original_canvas = chart.fig.canvas
     path = tmp_path / "uniform.pdf"
     report = Report("Cover", figsize=figsize, margin=0.5)
-    report.add_text("Text page").add_table(table).add_chart(chart)
+    report.add_text("Text page").add_table(table).add_page_break().add_chart(chart)
     report.save(path)
     reader = PdfReader(path)
-    assert len(reader.pages) == 4
+    assert len(reader.pages) == 2
     for page in reader.pages:
         assert float(page.mediabox.width) == pytest.approx(figsize[0] * 72)
         assert float(page.mediabox.height) == pytest.approx(figsize[1] * 72)
         assert float(page.cropbox.width) == pytest.approx(figsize[0] * 72)
         assert len(page.images) == 0  # Text, table, and chart remain vector output.
-    assert "Small table" in reader.pages[2].extract_text()
-    assert "Large chart" in reader.pages[3].extract_text()
+    assert "Small table" in reader.pages[0].extract_text()
+    assert "Large chart" in reader.pages[1].extract_text()
     assert chart.fig.get_size_inches().tolist() == original_size.tolist()
     assert chart.ax.get_position().bounds == pytest.approx(original_position)
     assert chart.fig.canvas is original_canvas

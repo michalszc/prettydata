@@ -17,7 +17,7 @@ the [theme guide](../guides/themes.md) for a complete example.
 
 Charts accept `font_size`, `figsize`, and plotting options such as `color`,
 `linewidth`, or `marker`; available options depend on the chart type. See
-[Charts](charts.md). Report themes style the report's cover and text pages;
+[Charts](charts.md). Report themes style page backgrounds and report text;
 supplied tables and charts retain their own appearance. Use the same theme on
 all objects for a uniform document.
 
